@@ -14,7 +14,7 @@ CREATE TABLE books (
     keyword VARCHAR(256),
     book_subject VARCHAR(256));
     
-CREATE TABLE customer (
+CREATE TABLE customers (
 	login_name VARCHAR(256) PRIMARY KEY,
     fullname VARCHAR(256),
     login_password VARCHAR(256) NOT NULL,
@@ -29,25 +29,25 @@ CREATE TABLE orders (
     order_date DATE,
     order_status VARCHAR(256),
     PRIMARY KEY (login_name,ISBN13),
-    FOREIGN KEY (login_name) REFERENCES customer(login_name),
+    FOREIGN KEY (login_name) REFERENCES customers(login_name),
     FOREIGN KEY (ISBN13) REFERENCES books(ISBN13));
     
-CREATE TABLE feedback(
+CREATE TABLE feedbacks(
 	login_name VARCHAR(256),
     ISBN13 CHAR(14),
     feedback_score INT CHECK (feedback_score>=0 AND feedback_score<=10),
     feedback_text VARCHAR(256),
     feedback_date DATE,
     PRIMARY KEY( login_name, ISBN13),
-    FOREIGN KEY (login_name) REFERENCES customer(login_name),
+    FOREIGN KEY (login_name) REFERENCES customers(login_name),
     FOREIGN KEY (ISBN13) REFERENCES books(ISBN13));
       
-CREATE TABLE rate(
+CREATE TABLE rates(
 	rater VARCHAR(256)  NOT NULL,
     rated VARCHAR(256)  NOT NULL,
     rating INT  NOT NULL CHECK (rating <=10 AND rating >=1),
     ISBN13 CHAR(14) NOT NULL,
     PRIMARY KEY ( rater, rated, ISBN13),
-    FOREIGN KEY (rater) REFERENCES customer(login_name),
-    FOREIGN KEY (rated) REFERENCES customer(login_name),
+    FOREIGN KEY (rater) REFERENCES customers(login_name),
+    FOREIGN KEY (rated) REFERENCES customers(login_name),
     FOREIGN KEY (ISBN13) REFERENCES books(ISBN13));    
