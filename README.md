@@ -8,5 +8,5 @@ B&N is a large db-project and it has decided to go online. Your team has been ca
 1. Install pip (package management system)
 2. Install virtualenv to create isolated Python environment. `pip install virtualenv`.
 3. Create virtual environment in project folder. E.g. `virtualenv venv`
-4. Activate virtual environment. E.g. `source venv/bin/activate`
+4. Activate virtual environment. E.g. `source venv/bin/activate` / for windows: venv\scripts\activate.bat
 5. Install required packages. `pip install -r requirements.txt`
