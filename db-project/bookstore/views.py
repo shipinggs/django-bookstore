@@ -15,11 +15,11 @@ def cart(request):
 
 def home(request):
     #TODO: add functionality
-    return render(request, 'bookstore/login.html')
+    return render(request, 'bookstore/home.html')
 
-def index(request):
-    #TODO: either remove or add functionality here
-    return HttpResponse('<h1>You are at account page</h1>')
+def login(request):
+    #TODO: add functionality
+    return HttpResponse('<h1>You are at login page</h1>')
 
 def register(request):
     #TODO: add functionality
