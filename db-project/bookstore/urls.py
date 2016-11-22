@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'home', views.home, name='home'),
     url(r'login', views.login, name='login'),
     # url(r'^$', views.index, name='index'),
+    url(r'query', views.queryer, name='query'),
     url(r'register', views.register, name='register'),
 ]

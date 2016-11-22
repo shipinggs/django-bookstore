@@ -1,31 +1,11 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
-<style>
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
-}
-
-li {
-    float: left;
-}
-
-li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-li a:hover {
-    background-color: #111;
-}
-</style>
+  <link rel="stylesheet" type="text/css" href="{% static "css/header.css"  %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/sidescroll.css"  %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/gridimg.css"  %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/searchbar.css"  %}">
 </head>
 <body>
 
@@ -34,7 +14,107 @@ li a:hover {
   <li><a href="/bookstore/cart">Cart</a></li>
   <li><a href="/bookstore/login">Login/Sign up</a></li>
   <li><a href="/bookstore/account">Account</a></li>
+<li>
+	<div id="tfheader">
+		<form id="tfnewsearch" method="get" action="/bookstore/queryer">
+		        <input type="text" class="tftextinput" name="search" size="21" maxlength="120">
+            <input type="submit" value="search" class="tfbutton">
+		</form>
+	</div>
+</li>
+
 </ul>
 
+<header>
+  <h1>The Bookstore</h1>
+  <p>For readers, By readers</p>
+</header>
+
+<ul id="rig">
+    <li>
+        <a class="rig-cell" href="#">
+            <img class="rig-img" src="{% static "img/img-arts.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Arts</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/image-2.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Accounting</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/img-business.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Business</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/image-4.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Curabitur tempus</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/image-5.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Sed et nunc luctus</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/image-6.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Suspendisse tellus</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+            <img class="rig-img" src="{% static "img/image-1.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Lorem Ipsum Dolor</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/image-2.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Consectetur Adipiscing</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/image-3.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Vivamus ut Felis</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/image-4.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Curabitur tempus</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/img-science.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Science</span>
+        </a>
+    </li>
+    <li>
+        <a class="rig-cell" href="#">
+          <img class="rig-img" src="{% static "img/img-society.jpg"  %}">
+            <span class="rig-overlay"></span>
+            <span class="rig-text">Society</span>
+        </a>
+    </li>
+</ul>
 </body>
 </html>

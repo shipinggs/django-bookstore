@@ -21,6 +21,12 @@ def login(request):
     #TODO: add functionality
     return HttpResponse('<h1>You are at login page</h1>')
 
+def queryer(request):
+    #TODO: add response to search function
+    return HttpResponse('<h1>You are at search page</h1>')
+
+
+
 def register(request):
     #TODO: add functionality
     return HttpResponse('<h1>You are at register page</h1>')
