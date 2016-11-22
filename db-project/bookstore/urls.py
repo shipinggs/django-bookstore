@@ -11,4 +11,5 @@ urlpatterns = [
     # url(r'^$', views.index, name='index'),
     url(r'query', views.queryer, name='query'),
     url(r'register', views.register, name='register'),
+    url(r'book/(?P<bid>[a-zA-Z0-9]+)', views.book_details, name = 'book_details'),
 ]
