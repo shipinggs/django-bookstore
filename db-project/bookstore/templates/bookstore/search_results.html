@@ -29,11 +29,11 @@
   <h1>Search Results</h1>
 </header>
 {% for key, values in book_imgs.items %}
-    <!-- <div> -->
-        <p>published: {{ key }}</p>
-        <img src={{value}}>
-        <p> test</p>
-    <!-- </div> -->
+    <div>
+        <img src={{values}}>
+        <a href="/bookstore/book/{{key}}">{{ key }}</a>
+
+    </div>
 {% endfor %}
 </body>
 </html>
