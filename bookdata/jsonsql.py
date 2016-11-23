@@ -37,7 +37,7 @@ for i in range(len(data['data'])):
     except:
         book_subject = 'General'
     
-    statement = "INSERT INTO books VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    statement = "INSERT INTO book VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     try:
         cur.execute(statement, (isbn13,isbn10,title, author,publisher,year,num_copies,price,book_format,keyword,book_subject))
         db.commit()
