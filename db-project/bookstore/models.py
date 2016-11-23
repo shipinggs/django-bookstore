@@ -10,56 +10,43 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class Books(models.Model):
+class Book(models.Model):
     isbn13 = models.CharField(db_column='ISBN13', primary_key=True, max_length=14)  # Field name made lowercase.
     isbn10 = models.CharField(db_column='ISBN10', unique=True, max_length=10)  # Field name made lowercase.
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255, blank=True, null=True)
     publisher = models.CharField(max_length=255, blank=True, null=True)
-    year = models.IntegerField(blank=True, null=True)
-    num_copies = models.IntegerField(blank=True, null=True)
-    price = models.FloatField(blank=True, null=True)
-    book_format = models.CharField(max_length=9, blank=True, null=True)
+    years = models.IntegerField()
+    num_copies = models.IntegerField()
+    price = models.FloatField()
+    book_format = models.CharField(max_length=9)
     keyword = models.CharField(max_length=255, blank=True, null=True)
     book_subject = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'books'
+        db_table = 'book'
 
 
-class Customers(models.Model):
+class Customer(models.Model):
     login_name = models.CharField(primary_key=True, max_length=255)
-    fullname = models.CharField(max_length=255, blank=True, null=True)
+    fullname = models.CharField(max_length=255)
     login_password = models.CharField(max_length=255)
-    credit_card = models.CharField(max_length=16, blank=True, null=True)
-    address = models.CharField(max_length=255, blank=True, null=True)
-    phone_num = models.IntegerField(blank=True, null=True)
+    credit_card = models.CharField(max_length=16)
+    address = models.CharField(max_length=255)
+    phone_num = models.IntegerField()
 
     class Meta:
         managed = False
-        db_table = 'customers'
-
-
-class Feedbacks(models.Model):
-    login_name = models.ForeignKey(Customers, models.DO_NOTHING, db_column='login_name')
-    isbn13 = models.ForeignKey(Books, models.DO_NOTHING, db_column='ISBN13')  # Field name made lowercase.
-    feedback_score = models.IntegerField(blank=True, null=True)
-    feedback_text = models.CharField(max_length=255, blank=True, null=True)
-    feedback_date = models.DateField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'feedbacks'
-        unique_together = (('login_name', 'isbn13'),)
+        db_table = 'customer'
 
 
 class Orders(models.Model):
-    login_name = models.ForeignKey(Customers, models.DO_NOTHING, db_column='login_name')
-    isbn13 = models.ForeignKey(Books, models.DO_NOTHING, db_column='ISBN13')  # Field name made lowercase.
+    login_name = models.ForeignKey(Customer, models.DO_NOTHING, db_column='login_name')
+    isbn13 = models.ForeignKey(Book, models.DO_NOTHING, db_column='ISBN13')  # Field name made lowercase.
     num_order = models.IntegerField(blank=True, null=True)
-    order_date = models.DateField(blank=True, null=True)
-    order_status = models.CharField(max_length=255, blank=True, null=True)
+    order_date = models.DateField()
+    order_status = models.CharField(max_length=255)
 
     class Meta:
         managed = False
@@ -67,13 +54,38 @@ class Orders(models.Model):
         unique_together = (('login_name', 'isbn13'),)
 
 
-class Rates(models.Model):
-    rater = models.ForeignKey(Customers, models.DO_NOTHING, db_column='rater', related_name='rater_content_type')
-    rated = models.ForeignKey(Customers, models.DO_NOTHING, db_column='rated', related_name='rated_content_type')
+class Rate(models.Model):
+    rater = models.ForeignKey(Customer, models.DO_NOTHING, db_column='rater', related_name='%(class)s_rater_requests_created')
+    rated = models.ForeignKey('Review', models.DO_NOTHING, db_column='rated', related_name='%(class)s_rated_requests_created')
     rating = models.IntegerField()
-    isbn13 = models.ForeignKey(Books, models.DO_NOTHING, db_column='ISBN13')  # Field name made lowercase.
+    isbn13 = models.ForeignKey('Review', models.DO_NOTHING, db_column='ISBN13', related_name='%(class)s_isbn13_requests_created')  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'rates'
+        db_table = 'rate'
         unique_together = (('rater', 'rated', 'isbn13'),)
+
+
+class Review(models.Model):
+    login_name = models.ForeignKey(Customer, models.DO_NOTHING, db_column='login_name')
+    isbn13 = models.ForeignKey(Book, models.DO_NOTHING, db_column='ISBN13')  # Field name made lowercase.
+    review_score = models.IntegerField(blank=True, null=True)
+    review_text = models.CharField(max_length=255, blank=True, null=True)
+    review_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'review'
+        unique_together = (('login_name', 'isbn13'),)
+
+
+class Shoppingcart(models.Model):
+    login_name = models.ForeignKey(Customer, models.DO_NOTHING, db_column='login_name')
+    isbn13 = models.ForeignKey(Book, models.DO_NOTHING, db_column='ISBN13')  # Field name made lowercase.
+    num_order = models.IntegerField(blank=True, null=True)
+    order_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'shoppingcart'
+        unique_together = (('login_name', 'isbn13'),)
