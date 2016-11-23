@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static "css/header.css"  %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/sidescroll.css"  %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/gridimg.css"  %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/searchbar.css"  %}">
+</head>
+<body>
+
+<ul>
+  <li><a class="active" href="/bookstore/home">Home</a></li>
+  <li><a href="/bookstore/cart">Cart</a></li>
+  <li><a href="/bookstore/login">Login/Sign up</a></li>
+  <li><a href="/bookstore/account">Account</a></li>
+<li>
+	<div id="tfheader">
+		<form id="tfnewsearch" method="get" action="bookstore/search/">
+      <label for="search_value">Search: </label>
+      <input id="search_value" type="text" name="search_value" maxlength="100" />
+		        <!-- <input type="text" class="tftextinput" name="search" size="21" maxlength="120"> -->
+            <input type="submit" value="Submit">
+		</form>
+	</div>
+</li>
+</ul>
+<header>
+  <h1>Search Results</h1>
+</header>
+{% for key, values in book_imgs.items %}
+    <div>
+        <img src={{values}}>
+        <a href="/bookstore/book/{{key}}">{{ key }}</a>
+
+    </div>
+{% endfor %}
+</body>
+</html>

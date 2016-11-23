@@ -16,13 +16,14 @@
   <li><a href="/bookstore/account">Account</a></li>
 <li>
 	<div id="tfheader">
-		<form id="tfnewsearch" method="get" action="/bookstore/queryer">
-		        <input type="text" class="tftextinput" name="search" size="21" maxlength="120">
-            <input type="submit" value="search" class="tfbutton">
+		<form id="tfnewsearch" method="get" action="bookstore/search/">
+      <label for="search_value">Search: </label>
+      <input id="search_value" type="text" name="search_value" maxlength="100" />
+		        <!-- <input type="text" class="tftextinput" name="search" size="21" maxlength="120"> -->
+            <input type="submit" value="Submit">
 		</form>
 	</div>
 </li>
-
 </ul>
 
 <header>
