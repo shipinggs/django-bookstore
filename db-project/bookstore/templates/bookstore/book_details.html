@@ -1,8 +1,256 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
 <head>
-<h1>{{book.title}}</h1>
+	<link rel="stylesheet" href="{% static "css/book-details.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/header.css"  %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/searchbar.css"  %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+	
+	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+	<style>
+		html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
+	</style>  
 </head>
 
-<body>
- <img src={{book_img}}>
- {{book.isbn13}}
+
+
+<body class="w3-light-grey">
+
+	<ul>
+		<li><a class="active" href="/bookstore/home">Home</a></li>
+  		<li><a href="/bookstore/cart">Cart</a></li>
+  		<li><a href="/bookstore/login">Login/Sign up</a></li>
+  		<li><a href="/bookstore/account">Account</a></li>
+		<li>
+			<div id="tfheader">
+			<form id="tfnewsearch" method="get" action="/bookstore/queryer">
+		    	<input type="text" class="tftextinput" name="search" size="21" maxlength="120">
+            	<input type="submit" value="search" class="tfbutton">
+			</form>
+			</div>
+		</li>
+
+	</ul>
+
+<!-- Page Container -->
+<div class="w3-content w3-margin-top" style="max-width:1400px;">
+
+  <!-- The Grid -->
+  <div class="w3-row-padding">
+  
+    <!-- Left Column -->
+    <div class="w3-third">
+    
+      <div class="w3-white w3-text-grey w3-card-4">
+        <div class="w3-display-container">
+          <img src={{book_img}} style="width:100%" alt="Avatar">
+          <div class="w3-display-bottomleft w3-container w3-text-black">
+          </div>
+        </div>
+        <div class="w3-container">
+          <div>
+          <p align="center">
+          	<form id="addtocart" method="post" action="{% url 'add_to_cart' book.isbn10 %}">
+          	{% csrf_token %}
+			<button type='submit' value="Add To Cart" class="w3-btn-block w3-yellow w3-hover-khaki" style="font-family: 'Roboto';" text-align: left><i class="fa fa-shopping-cart fa-fw w3-margin-right w3-large w3-text-black">
+			</i> Add To Cart</button>
+			</form>
+		  </p>
+
+		  <div id="content-left">
+		  	<i class="fa fa-barcode fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>ISBN10</strong>
+		  </div>
+		  <div id="content-right">
+		  	<i class="fa-fw w3-text-teal" align="right"></i>{{book.isbn10}}
+		  </div>
+
+		  <div id="content-left-no-icon">
+		  	<i class="fa-fw w3-margin-right w3-text-teal"></i><strong>ISBN13</strong>
+		  </div>
+		  <div id="content-right">
+		  	<i class="fa-fw w3-text-teal" align="right"></i>{{book.isbn13}}
+		  </div>
+          
+          <div id="container-1">
+	          <div id="content-left">
+			  	<p><i class="fa fa-book fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>Publisher</strong></p>
+			  </div>
+			  <div id="content-right">
+			  	<p><i class="fa-fw w3-text-teal"></i>{{book.publisher}}</p>
+			  </div>
+		  </div>
+
+		  <div id="content-left">
+		  	<p><i class="fa fa-calendar fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>Year Published</strong></p>
+		  </div>
+		  <div id="content-right">
+		  	<p><i class="fa-fw w3-text-teal"></i>{{book.year}}</p>
+		  </div>
+          
+          <div id="content-left">
+		  	<p><i class="fa fa-sort fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>In Stock</strong></p>
+		  </div>
+		  <div id="content-right">
+		  	<p><i class="fa-fw w3-text-teal"></i>{{book.num_copies}}</p>
+		  </div>
+
+		  </div>
+          
+          <!--
+          <div>
+
+          <p></p>
+          <div class="w3-progress-container w3-round-xlarge w3-small">
+            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:90%">
+              <div class="w3-center w3-text-white">90%</div>
+            </div>
+          </div>
+          <p>Photography</p>
+          <div class="w3-progress-container w3-round-xlarge w3-small">
+            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:80%">
+              <div class="w3-center w3-text-white">80%</div>
+            </div>
+          </div>
+          <p>Illustrator</p>
+          <div class="w3-progress-container w3-round-xlarge w3-small">
+            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:75%">
+              <div class="w3-center w3-text-white">75%</div>
+            </div>
+          </div>
+          <p>Media</p>
+          <div class="w3-progress-container w3-round-xlarge w3-small">
+            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:50%">
+              <div class="w3-center w3-text-white">50%</div>
+            </div>
+          </div>
+          <br>
+
+          <p class="w3-large w3-text-theme"><b><i class="fa fa-globe fa-fw w3-margin-right w3-text-teal"></i>Languages</b></p>
+          <p>English</p>
+          <div class="w3-progress-container w3-round-xlarge">
+            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:100%"></div>
+          </div>
+          <p>Spanish</p>
+          <div class="w3-progress-container w3-round-xlarge">
+            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:55%"></div>
+          </div>
+          <p>German</p>
+          <div class="w3-progress-container w3-round-xlarge">
+            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:25%"></div>
+
+          </div>
+      -->
+          </div>
+          <br>
+        
+      </div><br>
+
+    <!-- End Left Column -->
+    </div>
+
+    <!-- Right Column -->
+    <div class="w3-twothird">
+    
+      <div class="w3-container w3-card-2 w3-white w3-margin-bottom">
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-book fa-fw w3-margin-right w3-xxlarge w3-text-dark-grey"></i>{{book.title}}</h2>
+        <div class="w3-container">
+          <h5 class="w3-opacity"><b>by {{book.author}}</b></h5>
+          <h6 class="w3-text-teal"><i class="fa-fw"></i>Summary: {{book.keyword}}</h6>
+         <p>
+         	<h6 class="w3-text-grey w3-large" style="display:inline"><i class="fa-fw"></i>Rating 	&nbsp;	&nbsp;</h6>
+
+           <!-- Rating Stars -->
+          <form action="{% url 'review' book.isbn10 %}" method="post">
+          {% csrf_token %}
+          <span class="starRating">
+          	<input id="rating10" type="radio" name="rating" value="10" {% if rating == 10 %}checked{%endif%}>
+        	<label for="rating10">10</label>
+          	<input id="rating9" type="radio" name="rating" value="9" {% if rating == 9 %}checked{%endif%}>
+        	<label for="rating9">9</label>
+          	<input id="rating8" type="radio" name="rating" value="8" {% if rating == 8 %}checked{%endif%}>
+        	<label for="rating8">8</label>
+          	<input id="rating7" type="radio" name="rating" value="7" {% if rating == 7 %}checked{%endif%}>
+        	<label for="rating7">7</label>
+          	<input id="rating6" type="radio" name="rating" value="6" {% if rating == 6 %}checked{%endif%}>
+        	<label for="rating6">6</label>
+			<input id="rating5" type="radio" name="rating" value="5" {% if rating == 5 %}checked{%endif%}>
+        	<label for="rating5">5</label>
+        	<input id="rating4" type="radio" name="rating" value="4" {% if rating == 4 %}checked{%endif%}>
+	        <label for="rating4">4</label>
+	        <input id="rating3" type="radio" name="rating" value="3" {% if rating == 3 %}checked{%endif%}>
+	        <label for="rating3">3</label>
+	        <input id="rating2" type="radio" name="rating" value="2" {% if rating == 2 %}checked{%endif%}>
+	        <label for="rating2">2</label>
+	        <input id="rating1" type="radio" name="rating" value="1" {% if rating == 1 %}checked{%endif%}>
+	        <label for="rating1">1</label>
+		  </span>
+		  <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{rating}}/10 stars</h6>
+		  <input type="submit" value="Submit review"> 
+		  </form>
+		</p>
+          
+
+		  <!-- End Rating Stars -->
+
+          <hr>
+        </div>
+        <div class="w3-container">
+          <h5 class="w3-opacity"><b>Web Developer / something.com</b></h5>
+          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Mar 2012 - Dec 2014</h6>
+          <p>Consectetur adipisicing elit. Praesentium magnam consectetur vel in deserunt aspernatur est reprehenderit sunt hic. Nulla tempora soluta ea et odio, unde doloremque repellendus iure, iste.</p>
+          <hr>
+        </div>
+        <div class="w3-container">
+          <h5 class="w3-opacity"><b>Graphic Designer / designsomething.com</b></h5>
+          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Jun 2010 - Mar 2012</h6>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. </p><br>
+        </div>
+      </div>
+
+      <div class="w3-container w3-card-2 w3-white">
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Education</h2>
+        <div class="w3-container">
+          <h5 class="w3-opacity"><b>W3Schools.com</b></h5>
+          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Forever</h6>
+          <p>Web Development! All I need to know in one place</p>
+          <hr>
+        </div>
+        <div class="w3-container">
+          <h5 class="w3-opacity"><b>London Business School</b></h5>
+          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>2013 - 2015</h6>
+          <p>Master Degree</p>
+          <hr>
+        </div>
+        <div class="w3-container">
+          <h5 class="w3-opacity"><b>School of Coding</b></h5>
+          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>2010 - 2013</h6>
+          <p>Bachelor Degree</p><br>
+        </div>
+      </div>
+
+    <!-- End Right Column -->
+    </div>
+    
+  <!-- End Grid -->
+  </div>
+  
+  <!-- End Page Container -->
+</div>
+
+<footer class="w3-container w3-teal w3-center w3-margin-top">
+  <p>Find me on social media.</p>
+  <i class="fa fa-facebook-official w3-hover-text-indigo w3-large"></i>
+  <i class="fa fa-instagram w3-hover-text-purple w3-large"></i>
+  <i class="fa fa-snapchat w3-hover-text-yellow w3-large"></i>
+  <i class="fa fa-pinterest-p w3-hover-text-red w3-large"></i>
+  <i class="fa fa-twitter w3-hover-text-light-blue w3-large"></i>
+  <i class="fa fa-linkedin w3-hover-text-indigo w3-large"></i>
+  <p>Powered by <a href="http://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+</footer>
+
 </body>
+</html>
+

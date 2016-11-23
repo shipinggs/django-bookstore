@@ -49,4 +49,13 @@ def book_details(request, bid):
     except:
         print ('excepted yo')
         book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
-    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img})
+    
+    rating = 4
+    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating': rating})
+
+def review(request, bid):
+    book = get_object_or_404(Book, bid=bid)
+    return HttpResponse("Standby review")
+
+def add_to_cart(request, bid):
+    return HttpResponse('<h1>You are adding book to shopping cart</h1>')
