@@ -1,10 +1,11 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Customers, Books, Feedbacks, Orders, Rates
+from .models import Customer, Book, Review, Orders, Rate, Shoppingcart
 
-admin.site.register(Customers)
-admin.site.register(Books)
-admin.site.register(Feedbacks)
+admin.site.register(Customer)
+admin.site.register(Book)
+admin.site.register(Review)
 admin.site.register(Orders)
-admin.site.register(Rates)
+admin.site.register(Rate)
+admin.site.register(Shoppingcart)
