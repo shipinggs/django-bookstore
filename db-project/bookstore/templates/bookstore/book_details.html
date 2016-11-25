@@ -7,12 +7,12 @@
   <link rel="stylesheet" type="text/css" href="{% static "css/searchbar.css"  %}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-	
+
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 	<style>
 		html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
-	</style>  
+	</style>
 </head>
 
 
@@ -40,10 +40,10 @@
 
   <!-- The Grid -->
   <div class="w3-row-padding">
-  
+
     <!-- Left Column -->
     <div class="w3-third">
-    
+
       <div class="w3-white w3-text-grey w3-card-4">
         <div class="w3-display-container">
           <img src={{book_img}} style="width:100%" alt="Avatar">
@@ -53,7 +53,7 @@
         <div class="w3-container">
           <div>
           <p align="center">
-          	<form id="addtocart" method="post" action="{% url 'add_to_cart' book.isbn10 %}">
+          	<form id="addtocart" method="post" action="{% url 'bookstore:add_to_cart' book.isbn10 %}">
           	{% csrf_token %}
 			<button type='submit' value="Add To Cart" class="w3-btn-block w3-yellow w3-hover-khaki" style="font-family: 'Roboto';" text-align: left><i class="fa fa-shopping-cart fa-fw w3-margin-right w3-large w3-text-black">
 			</i> Add To Cart</button>
@@ -73,7 +73,7 @@
 		  <div id="content-right">
 		  	<i class="fa-fw w3-text-teal" align="right"></i>{{book.isbn13}}
 		  </div>
-          
+
           <div id="container-1">
 	          <div id="content-left">
 			  	<p><i class="fa fa-book fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>Publisher</strong></p>
@@ -89,7 +89,7 @@
 		  <div id="content-right">
 		  	<p><i class="fa-fw w3-text-teal"></i>{{book.years}}</p>
 		  </div>
-          
+
           <div id="content-left">
 		  	<p><i class="fa fa-sort fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>In Stock</strong></p>
 		  </div>
@@ -98,7 +98,7 @@
 		  </div>
 
 		  </div>
-          
+
           <!--
           <div>
 
@@ -145,7 +145,7 @@
       -->
           </div>
           <br>
-        
+
       </div><br>
 
     <!-- End Left Column -->
@@ -153,7 +153,7 @@
 
     <!-- Right Column -->
     <div class="w3-twothird">
-    
+
       <div class="w3-container w3-card-2 w3-white w3-margin-bottom">
         <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-book fa-fw w3-margin-right w3-xxlarge w3-text-dark-grey"></i>{{book.title}}</h2>
         <div class="w3-container">
@@ -163,7 +163,7 @@
          	<h6 class="w3-text-grey w3-large" style="display:inline"><i class="fa fa-bar-chart-o fa-fw"></i>&nbsp; Rating 	&nbsp;	&nbsp;</h6>
 
            <!-- Rating Stars -->
-          
+
           <span class="starRating">
           	<input id="rating10" type="radio" name="rating" value="10" disabled {% if rating == 10 %}checked{%endif%}>
         	<label for="rating10">10</label>
@@ -188,8 +188,9 @@
 		  </span>
 		  <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{rating}}/10 stars</h6>
       
+
 		</p>
-          
+
 
 		  <!-- End Rating Stars -->
 
@@ -265,10 +266,10 @@
 
     <!-- End Right Column -->
     </div>
-    
+
   <!-- End Grid -->
   </div>
-  
+
   <!-- End Page Container -->
 </div>
 
@@ -285,4 +286,3 @@
 
 </body>
 </html>
-

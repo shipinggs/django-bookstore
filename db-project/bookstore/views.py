@@ -1,9 +1,15 @@
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book
 import urllib
 import xmltodict
-from .forms import SearchForm
+
+from django.views import generic
+from django.views.generic import View
+from django.contrib.auth import authenticate, login
+
+from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm
+
 def account(request):
     #TODO: add functionality
     return HttpResponse('<h1>You are at account page</h1>')
@@ -18,11 +24,8 @@ def cart(request):
 
 def home(request):
     #TODO: add functionality
-    return render(request, 'bookstore/home.html')
+    return render(request, 'bookstore/index.html')
 
-def login(request):
-    #TODO: add functionality
-    return HttpResponse('<h1>You are at login page</h1>')
 
 def search(request):
     #TODO: add response to search function
@@ -79,10 +82,6 @@ def search(request):
     print (img_dict)
     return render(request, 'bookstore/search_results.html', {'books': isbn_dict, 'book_imgs': img_dict})
 
-def register(request):
-    #TODO: add functionality
-    return HttpResponse('<h1>You are at register page</h1>')
-
 def book_details(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
 
@@ -98,7 +97,7 @@ def book_details(request, bid):
     except:
         print ('excepted yo')
         book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
-    
+
     rating = 4
     return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating': rating})
 
@@ -108,3 +107,77 @@ def review(request, bid):
 
 def add_to_cart(request, bid):
     return HttpResponse('<h1>You are adding book to shopping cart</h1>')
+
+
+class RegistrationFormView(View):
+    user_form_class = UserRegistrationForm
+    profile_form_class = ProfileForm
+    template_name = 'bookstore/registration-form.html'
+
+    # display blank form
+    def get(self, request):
+        user_form = self.user_form_class(None)
+        profile_form = self.profile_form_class(None)
+        return render(request, self.template_name, {
+            'forms': [user_form, profile_form]
+        })
+
+    # process form data
+    def post(self, request):
+        user_form = self.user_form_class(request.POST)
+        profile_form = self.profile_form_class(request.POST)
+        if user_form.is_valid() and profile_form.is_valid():
+
+            user = user_form.save(commit=False)
+
+            # cleaned (normalized) data
+            username = user_form.cleaned_data['username']
+            password = user_form.cleaned_data['password']
+            user.set_password(password)
+            user.save()
+
+            user.profile.credit_card_number = profile_form.cleaned_data['credit_card_number']
+            user.profile.mailing_address = profile_form.cleaned_data['mailing_address']
+            user.profile.phone_number = profile_form.cleaned_data['phone_number']
+            user.profile.save()
+
+            # returns User object if credentials are correct
+            user = authenticate(username=username, password=password)
+
+
+
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return redirect('bookstore:home')
+
+        return render(request, self.template_name, {
+            'forms': [user_form, profile_form]
+        })
+
+
+class LoginFormView(View):
+    form_class = LoginForm
+    template_name = 'bookstore/login-form.html'
+
+    # display blank form
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    # process form data
+    def post(self, request):
+        form = self.form_class(request.POST)
+        username = request.POST['username']
+        password = request.POST['password']
+        # returns User object if credentials are correct
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('bookstore:home')
+
+        return render(request, self.template_name, {
+            'form': form,
+            'error_message': 'The username and password provided do not match'
+        })
