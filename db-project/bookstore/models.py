@@ -41,7 +41,7 @@ class Customer(models.Model):
         db_table = 'customer'
 
 
-class Orders(models.Model):
+class CustomerOrder(models.Model):
     login_name = models.ForeignKey(Customer, models.DO_NOTHING, db_column='login_name')
     isbn13 = models.ForeignKey(Book, models.DO_NOTHING, db_column='ISBN13')  # Field name made lowercase.
     num_order = models.IntegerField(blank=True, null=True)
@@ -50,7 +50,7 @@ class Orders(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'orders'
+        db_table = 'customer_order'
         unique_together = (('login_name', 'isbn13'),)
 
 
@@ -79,7 +79,7 @@ class Review(models.Model):
         unique_together = (('login_name', 'isbn13'),)
 
 
-class Shoppingcart(models.Model):
+class ShoppingCart(models.Model):
     login_name = models.ForeignKey(Customer, models.DO_NOTHING, db_column='login_name')
     isbn13 = models.ForeignKey(Book, models.DO_NOTHING, db_column='ISBN13')  # Field name made lowercase.
     num_order = models.IntegerField(blank=True, null=True)
@@ -87,5 +87,5 @@ class Shoppingcart(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'shoppingcart'
+        db_table = 'shopping_cart'
         unique_together = (('login_name', 'isbn13'),)
