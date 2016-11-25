@@ -25,7 +25,7 @@ CREATE TABLE customer (
     address VARCHAR(255) NOT NULL,
     phone_num INT NOT NULL);
 
-CREATE TABLE orders (
+CREATE TABLE customer_order (
 	login_name VARCHAR(255),
     ISBN13 CHAR(14),
     num_order INT, CHECK(num_order>0),
@@ -35,7 +35,7 @@ CREATE TABLE orders (
     FOREIGN KEY (login_name) REFERENCES customer(login_name),
     FOREIGN KEY (ISBN13) REFERENCES book(ISBN13));
 
-CREATE TABLE shoppingcart (
+CREATE TABLE shopping_cart (
 	login_name VARCHAR(255),
     ISBN13 CHAR(14),
     num_order INT, CHECK(num_order>0),
