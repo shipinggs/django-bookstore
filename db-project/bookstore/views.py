@@ -3,10 +3,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book
 import urllib
 import xmltodict
+import datetime
 
 from django.views import generic
 from django.views.generic import View
 from django.contrib.auth import authenticate, login
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm
 
@@ -90,23 +93,57 @@ def book_details(request, bid):
         f = urllib.request.urlopen(uri)
         data = f.read()
         f.close()
-
         data = xmltodict.parse(data)
-        print (data['GoodreadsResponse']['book']['image_url'])
+        #print (data['GoodreadsResponse']['book']['image_url'])
         book_img = data['GoodreadsResponse']['book']['image_url']
     except:
         print ('excepted yo')
         book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
 
     rating = 4
-    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating': rating})
+    uscore = 5
+    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating': rating, 'uscore':uscore})
 
 def review(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
-    return HttpResponse("Standby review")
+    rating = 4
+    #TODO: Check if user is currently logged in, if not redirect to login page
+    
+    #get username uname = ''
+
+    #TODO: Check what score was submitted
+    uscore = int(request.POST['ratinga'])
+    #Check if review was submitted    
+    ureview = request.POST['ureview']
+    if ureview == '':
+        uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
+        try:
+            f = urllib.request.urlopen(uri)
+            data = f.read()
+            f.close()
+            data = xmltodict.parse(data)
+
+            #print (data['GoodreadsResponse']['book']['image_url'])
+            book_img = data['GoodreadsResponse']['book']['image_url']
+        except:
+            print ('excepted yo')
+            book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
+        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating':rating, 'error_message':"Please enter a valid review!"})
+    
+    #if user has valid review, insert into Review table
+    #review = Review(login_name=, isbn13=book.isbn13, review_score=uscore, review_text=ureview, review_date=datetime.date)
+    #review.save()
+    return render(request, 'bookstore/review_success.html', {'book':book})
 
 def add_to_cart(request, bid):
-    return HttpResponse('<h1>You are adding book to shopping cart</h1>')
+    book = get_object_or_404(Book, isbn10=bid)
+
+    #TODO: Check if user is logged in, get user id
+
+    #Insert to shopping cart
+    #shopcart = ShoppingCart(login_name=, isbn13=book.isbn13, num_order=1,order_date=datetime.date)
+    #shopcart.save()
+    return HttpResponseRedirect(reverse('bookstore:home'))
 
 
 class RegistrationFormView(View):

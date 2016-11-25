@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% load static %}
+<head>
+	<link rel="stylesheet" href="{% static "css/book-details.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/header.css"  %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/searchbar.css"  %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+
+	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+	<style>
+		html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
+	</style>
+</head>
+
+<body>
+<h1 class=" w3-text-teal w3-large">Thank you for submitting a review!</h1>
+
+<a class="w3-text-teal" href="{% url 'bookstore:book_details' book.isbn10 %}">Back to book</a>
+
+</body>

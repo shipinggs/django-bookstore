@@ -24,7 +24,10 @@ for i in range(len(data['data'])):
         year = int(re.search(r'\d+', data['data'][i]['edition_info']).group())
         
     except:
-        year = random.randint(1970,2014)
+        try:
+            year = int(re.search(r'\d+', data['data'][i]['publisher_text']).group())
+        except:
+            year = random.randint(1970,2014)
     num_copies = 1
     price = round(random.uniform(20.0, 80.0), 2)
     try:

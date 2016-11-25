@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^register$', views.RegistrationFormView.as_view(), name='register'),
     url(r'^book/(?P<bid>[a-zA-Z0-9]+)$', views.book_details, name = 'book_details'),
  	url(r'^book/(?P<bid>[a-zA-Z0-9]+)/add-to-cart$', views.add_to_cart, name = 'add_to_cart'),
- 	url(r'^book/(?P<bid>[a-zA-Z0-9]+)/review$', views.review, name = 'review'),
+ 	url(r'^book/(?P<bid>[a-zA-Z0-9]+)/review', views.review, name = 'review'),
     url(r'search', views.search, name='search'),
-
 ]

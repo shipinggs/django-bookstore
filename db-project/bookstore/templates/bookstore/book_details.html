@@ -99,50 +99,6 @@
 
 		  </div>
 
-          <!--
-          <div>
-
-          <p></p>
-          <div class="w3-progress-container w3-round-xlarge w3-small">
-            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:90%">
-              <div class="w3-center w3-text-white">90%</div>
-            </div>
-          </div>
-          <p>Photography</p>
-          <div class="w3-progress-container w3-round-xlarge w3-small">
-            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:80%">
-              <div class="w3-center w3-text-white">80%</div>
-            </div>
-          </div>
-          <p>Illustrator</p>
-          <div class="w3-progress-container w3-round-xlarge w3-small">
-            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:75%">
-              <div class="w3-center w3-text-white">75%</div>
-            </div>
-          </div>
-          <p>Media</p>
-          <div class="w3-progress-container w3-round-xlarge w3-small">
-            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:50%">
-              <div class="w3-center w3-text-white">50%</div>
-            </div>
-          </div>
-          <br>
-
-          <p class="w3-large w3-text-theme"><b><i class="fa fa-globe fa-fw w3-margin-right w3-text-teal"></i>Languages</b></p>
-          <p>English</p>
-          <div class="w3-progress-container w3-round-xlarge">
-            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:100%"></div>
-          </div>
-          <p>Spanish</p>
-          <div class="w3-progress-container w3-round-xlarge">
-            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:55%"></div>
-          </div>
-          <p>German</p>
-          <div class="w3-progress-container w3-round-xlarge">
-            <div class="w3-progressbar w3-round-xlarge w3-teal" style="width:25%"></div>
-
-          </div>
-      -->
           </div>
           <br>
 
@@ -160,7 +116,7 @@
           <h5 class="w3-opacity"><b>by {{book.author}}</b></h5>
           <h6 class="w3-text-teal"><i class="fa-fw"></i>Summary: {{book.keyword}}</h6>
          <p>
-         	<h6 class="w3-text-grey w3-large" style="display:inline"><i class="fa fa-bar-chart-o fa-fw"></i>&nbsp; Rating 	&nbsp;	&nbsp;</h6>
+         	<h6 class="w3-text-grey w3-large" style="display:inline"><i class="fa fa-bar-chart-o fa-fw"></i>Rating 	&nbsp;</h6>
 
            <!-- Rating Stars -->
 
@@ -175,7 +131,7 @@
         	<label for="rating7">7</label>
           	<input id="rating6" type="radio" name="rating" value="6" disabled {% if rating == 6 %}checked{%endif%}>
         	<label for="rating6">6</label>
-			<input id="rating5" type="radio" name="rating" value="5" disabled {% if rating == 5 %}checked{%endif%}>
+			    <input id="rating5" type="radio" name="rating" value="5" disabled {% if rating == 5 %}checked{%endif%}>
         	<label for="rating5">5</label>
         	<input id="rating4" type="radio" name="rating" value="4" disabled {% if rating == 4 %}checked{%endif%}>
 	        <label for="rating4">4</label>
@@ -185,66 +141,80 @@
 	        <label for="rating2">2</label>
 	        <input id="rating1" type="radio" name="rating" value="1" disabled {% if rating == 1 %}checked{%endif%}>
 	        <label for="rating1">1</label>
-		  </span>
-		  <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{rating}}/10 stars</h6>
+		    </span>
+		    <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{rating}}/10 stars</h6>
       
 
-		</p>
+		    </p>
 
 
 		  <!-- End Rating Stars -->
 
-          <hr>
+        <hr>
         </div>
+
         <div class="w3-container">
-          <h5 class="w3-opacity"><b>Placeholder</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Mar 2012 - Dec 2014</h6>
+          <h5 class="w3-opacity"><b>Customers who bought this book also ordered</b></h5>
           <p>Consectetur adipisicing elit. Praesentium magnam consectetur vel in deserunt aspernatur est reprehenderit sunt hic. Nulla tempora soluta ea et odio, unde doloremque repellendus iure, iste.</p>
           <hr>
         </div>
         <div class="w3-container">
-          <h5 class="w3-opacity"><b>Customers who bought this book also ordered</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Jun 2010 - Mar 2012</h6>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. </p><br>
-        </div>
-      </div>
+          <h5 class="w3-opacity"><b>Read the book? Tell us your thoughts!</b></h5>
 
-      <div class="w3-container w3-card-2 w3-white">
-        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>See Community Reviews</h2>
-        <div class="w3-container">
+          {% if error_message %}<p class="w3-text-black"><strong>{{ error_message }}</strong></p>
+          {% endif %}
 
-                     
-          <form name="rating_form" action="{% url 'review' book.isbn10 %}" method="post">
+          {% if review_success %}<p class="w3-text-black"><strong>Thank you for your review!</strong></p>
+          {% endif %}
+          <!-- Second rating stars -->
+          <p>
+            <h6 class="w3-text-grey" style="display:inline"><i class="fa-fw"></i>Rate me: </h6>
+          <form action="{% url 'bookstore:review' book.isbn10 %}" method="post">
           {% csrf_token %}
           <span name="r" class="starRating-n">
-            <input id="rating10a" type="radio" name="ratinga" value="10" {% if urating == 10 %}checked{%endif%}>
+            <input id="rating10a" type="radio" name="ratinga" value="10" {% if uscore == 10 %}checked{%endif%}>
           <label for="rating10a">10</label>
-            <input id="rating9a" type="radio" name="ratinga" value="9" {% if urating == 9 %}checked{%endif%}>
+            <input id="rating9a" type="radio" name="ratinga" value="9" {% if uscore == 9 %}checked{%endif%}>
           <label for="rating9a">9</label>
-            <input id="rating8a" type="radio" name="ratinga" value="8" {% if urating == 8 %}checked{%endif%}>
+            <input id="rating8a" type="radio" name="ratinga" value="8" {% if uscore == 8 %}checked{%endif%}>
           <label for="rating8a">8</label>
-            <input id="rating7a" type="radio" name="ratinga" value="7" {% if urating == 7 %}checked{%endif%}>
+            <input id="rating7a" type="radio" name="ratinga" value="7" {% if uscore == 7 %}checked{%endif%}>
           <label for="rating7a">7</label>
-            <input id="rating6a" type="radio" name="ratinga" value="6" {% if urating == 6 %}checked{%endif%}>
+            <input id="rating6a" type="radio" name="ratinga" value="6" {% if uscore == 6 %}checked{%endif%}>
           <label for="rating6a">6</label>
-          <input id="rating5a" type="radio" name="ratinga" value="5" {% if urating == 5 %}checked{%endif%}>
+          <input id="rating5a" type="radio" name="ratinga" value="5" {% if uscore == 5 %}checked{%endif%}>
           <label for="rating5a">5</label>
-          <input id="rating4a" type="radio" name="ratinga" value="4" {% if urating == 4 %}checked{%endif%}>
+          <input id="rating4a" type="radio" name="ratinga" value="4" {% if uscore == 4 %}checked{%endif%}>
           <label for="rating4a">4</label>
-          <input id="rating3a" type="radio" name="ratinga" value="3" {% if urating == 3 %}checked{%endif%}>
+          <input id="rating3a" type="radio" name="ratinga" value="3" {% if uscore == 3 %}checked{%endif%}>
           <label for="rating3a">3</label>
-          <input id="rating2a" type="radio" name="ratinga" value="2" {% if urating == 2 %}checked{%endif%}>
+          <input id="rating2a" type="radio" name="ratinga" value="2" {% if uscore == 2 %}checked{%endif%}>
           <label for="rating2a">2</label>
-          <input id="rating1a" type="radio" name="ratinga" value="1" {% if urating == 1 %}checked{%endif%}>
+          <input id="rating1a" type="radio" name="ratinga" value="1" {% if uscore == 1 %}checked{%endif%}>
           <label for="rating1a">1</label>
         </span>
-        <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{rating}}/10 stars</h6>
-        <input type="submit" value="Submit review"> 
+
+        <br><br>
+        <textarea cols="50" rows="5" style="width:100%" name="ureview" placeholder="What do you think of the book?"></textarea>
+        <br><br>
+        
+        <button type='submit' value="review" class="w3-btn w3-lightgray w3-hover-grey" style="font-family: 'Roboto';" text-align: left><i class="fa-fw w3-large w3-text-black">
+        </i>Submit My Review</button>
         </form>
       </p>
         
 
-      <!-- End Rating Stars -->
+      <!-- End Review -->
+        </div>
+      </div>
+
+
+      <!-- LAST CONTAINER -->
+
+
+      <div class="w3-container w3-card-2 w3-white">
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>See Community Reviews</h2>
+        <div class="w3-container">
 
           <h5 class="w3-opacity"><b>W3Schools.com</b></h5>
           <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Forever</h6>
