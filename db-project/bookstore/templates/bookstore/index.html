@@ -10,13 +10,14 @@
 <body>
 
 <ul>
-  <li><a class="active" href="/bookstore/home">Home</a></li>
-  <li><a href="/bookstore/cart">Cart</a></li>
-  <li><a href="/bookstore/login">Login/Sign up</a></li>
-  <li><a href="/bookstore/account">Account</a></li>
+  <li><a class="active" href="{% url 'bookstore:home' %}">Home</a></li>
+  <li><a href="{% url 'bookstore:cart' %}">Cart</a></li>
+  <li><a href="{% url 'bookstore:login' %}">Login</a></li>
+  <li><a href="{% url 'bookstore:register' %}">Register</a></li>
+  <li><a href="{% url 'bookstore:account' %}">Account</a></li>
 <li>
 	<div id="tfheader">
-		<form id="tfnewsearch" method="get" action="bookstore/search/">
+		<form id="tfnewsearch" method="get" action="{% url 'bookstore:search' %}">
       <label for="search_value">Search: </label>
       <input id="search_value" type="text" name="search_value" maxlength="100" />
 		        <!-- <input type="text" class="tftextinput" name="search" size="21" maxlength="120"> -->
@@ -29,6 +30,9 @@
 <header>
   <h1>The Bookstore</h1>
   <p>For readers, By readers</p>
+  {% if not user.is_anonymous %}
+    <h3>Hello {{ user.first_name }}</h3>
+  {% endif %}
 </header>
 
 <ul id="rig">
