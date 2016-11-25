@@ -1,0 +1,33 @@
+{% extends 'bookstore/base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block body %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h3>Create a new account</h3>
+            {% if error_message %}
+              <p>
+                <strong>{{ error_message }}</strong>
+              </p>
+            {% endif %}
+            <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              {% for form in forms %}
+                {% include 'bookstore/form-template.html' %}
+              {% endfor %}
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-success">Register</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
