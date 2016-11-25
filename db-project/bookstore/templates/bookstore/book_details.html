@@ -87,7 +87,7 @@
 		  	<p><i class="fa fa-calendar fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>Year Published</strong></p>
 		  </div>
 		  <div id="content-right">
-		  	<p><i class="fa-fw w3-text-teal"></i>{{book.year}}</p>
+		  	<p><i class="fa-fw w3-text-teal"></i>{{book.years}}</p>
 		  </div>
           
           <div id="content-left">
@@ -160,36 +160,34 @@
           <h5 class="w3-opacity"><b>by {{book.author}}</b></h5>
           <h6 class="w3-text-teal"><i class="fa-fw"></i>Summary: {{book.keyword}}</h6>
          <p>
-         	<h6 class="w3-text-grey w3-large" style="display:inline"><i class="fa-fw"></i>Rating 	&nbsp;	&nbsp;</h6>
+         	<h6 class="w3-text-grey w3-large" style="display:inline"><i class="fa fa-bar-chart-o fa-fw"></i>&nbsp; Rating 	&nbsp;	&nbsp;</h6>
 
            <!-- Rating Stars -->
-          <form action="{% url 'review' book.isbn10 %}" method="post">
-          {% csrf_token %}
+          
           <span class="starRating">
-          	<input id="rating10" type="radio" name="rating" value="10" {% if rating == 10 %}checked{%endif%}>
+          	<input id="rating10" type="radio" name="rating" value="10" disabled {% if rating == 10 %}checked{%endif%}>
         	<label for="rating10">10</label>
-          	<input id="rating9" type="radio" name="rating" value="9" {% if rating == 9 %}checked{%endif%}>
+          	<input id="rating9" type="radio" name="rating" value="9" disabled {% if rating == 9 %}checked{%endif%}>
         	<label for="rating9">9</label>
-          	<input id="rating8" type="radio" name="rating" value="8" {% if rating == 8 %}checked{%endif%}>
+          	<input id="rating8" type="radio" name="rating" value="8" disabled {% if rating == 8 %}checked{%endif%}>
         	<label for="rating8">8</label>
-          	<input id="rating7" type="radio" name="rating" value="7" {% if rating == 7 %}checked{%endif%}>
+          	<input id="rating7" type="radio" name="rating" value="7" disabled {% if rating == 7 %}checked{%endif%}>
         	<label for="rating7">7</label>
-          	<input id="rating6" type="radio" name="rating" value="6" {% if rating == 6 %}checked{%endif%}>
+          	<input id="rating6" type="radio" name="rating" value="6" disabled {% if rating == 6 %}checked{%endif%}>
         	<label for="rating6">6</label>
-			<input id="rating5" type="radio" name="rating" value="5" {% if rating == 5 %}checked{%endif%}>
+			<input id="rating5" type="radio" name="rating" value="5" disabled {% if rating == 5 %}checked{%endif%}>
         	<label for="rating5">5</label>
-        	<input id="rating4" type="radio" name="rating" value="4" {% if rating == 4 %}checked{%endif%}>
+        	<input id="rating4" type="radio" name="rating" value="4" disabled {% if rating == 4 %}checked{%endif%}>
 	        <label for="rating4">4</label>
-	        <input id="rating3" type="radio" name="rating" value="3" {% if rating == 3 %}checked{%endif%}>
+	        <input id="rating3" type="radio" name="rating" value="3" disabled {% if rating == 3 %}checked{%endif%}>
 	        <label for="rating3">3</label>
-	        <input id="rating2" type="radio" name="rating" value="2" {% if rating == 2 %}checked{%endif%}>
+	        <input id="rating2" type="radio" name="rating" value="2" disabled {% if rating == 2 %}checked{%endif%}>
 	        <label for="rating2">2</label>
-	        <input id="rating1" type="radio" name="rating" value="1" {% if rating == 1 %}checked{%endif%}>
+	        <input id="rating1" type="radio" name="rating" value="1" disabled {% if rating == 1 %}checked{%endif%}>
 	        <label for="rating1">1</label>
 		  </span>
 		  <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{rating}}/10 stars</h6>
-		  <input type="submit" value="Submit review"> 
-		  </form>
+      
 		</p>
           
 
@@ -198,21 +196,55 @@
           <hr>
         </div>
         <div class="w3-container">
-          <h5 class="w3-opacity"><b>Web Developer / something.com</b></h5>
+          <h5 class="w3-opacity"><b>Placeholder</b></h5>
           <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Mar 2012 - Dec 2014</h6>
           <p>Consectetur adipisicing elit. Praesentium magnam consectetur vel in deserunt aspernatur est reprehenderit sunt hic. Nulla tempora soluta ea et odio, unde doloremque repellendus iure, iste.</p>
           <hr>
         </div>
         <div class="w3-container">
-          <h5 class="w3-opacity"><b>Graphic Designer / designsomething.com</b></h5>
+          <h5 class="w3-opacity"><b>Customers who bought this book also ordered</b></h5>
           <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Jun 2010 - Mar 2012</h6>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. </p><br>
         </div>
       </div>
 
       <div class="w3-container w3-card-2 w3-white">
-        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Education</h2>
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>See Community Reviews</h2>
         <div class="w3-container">
+
+                     
+          <form name="rating_form" action="{% url 'review' book.isbn10 %}" method="post">
+          {% csrf_token %}
+          <span name="r" class="starRating-n">
+            <input id="rating10a" type="radio" name="ratinga" value="10" {% if urating == 10 %}checked{%endif%}>
+          <label for="rating10a">10</label>
+            <input id="rating9a" type="radio" name="ratinga" value="9" {% if urating == 9 %}checked{%endif%}>
+          <label for="rating9a">9</label>
+            <input id="rating8a" type="radio" name="ratinga" value="8" {% if urating == 8 %}checked{%endif%}>
+          <label for="rating8a">8</label>
+            <input id="rating7a" type="radio" name="ratinga" value="7" {% if urating == 7 %}checked{%endif%}>
+          <label for="rating7a">7</label>
+            <input id="rating6a" type="radio" name="ratinga" value="6" {% if urating == 6 %}checked{%endif%}>
+          <label for="rating6a">6</label>
+          <input id="rating5a" type="radio" name="ratinga" value="5" {% if urating == 5 %}checked{%endif%}>
+          <label for="rating5a">5</label>
+          <input id="rating4a" type="radio" name="ratinga" value="4" {% if urating == 4 %}checked{%endif%}>
+          <label for="rating4a">4</label>
+          <input id="rating3a" type="radio" name="ratinga" value="3" {% if urating == 3 %}checked{%endif%}>
+          <label for="rating3a">3</label>
+          <input id="rating2a" type="radio" name="ratinga" value="2" {% if urating == 2 %}checked{%endif%}>
+          <label for="rating2a">2</label>
+          <input id="rating1a" type="radio" name="ratinga" value="1" {% if urating == 1 %}checked{%endif%}>
+          <label for="rating1a">1</label>
+        </span>
+        <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{rating}}/10 stars</h6>
+        <input type="submit" value="Submit review"> 
+        </form>
+      </p>
+        
+
+      <!-- End Rating Stars -->
+
           <h5 class="w3-opacity"><b>W3Schools.com</b></h5>
           <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Forever</h6>
           <p>Web Development! All I need to know in one place</p>

@@ -103,7 +103,7 @@ def book_details(request, bid):
     return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating': rating})
 
 def review(request, bid):
-    book = get_object_or_404(Book, bid=bid)
+    book = get_object_or_404(Book, isbn10=bid)
     return HttpResponse("Standby review")
 
 def add_to_cart(request, bid):
