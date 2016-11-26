@@ -162,6 +162,10 @@
         <div class="w3-container">
           <h5 class="w3-opacity"><b>Read the book? Tell us your thoughts!</b></h5>
 
+          {% if user.is_anonymous %}
+          <a href="{% url 'bookstore:login'%}?next={% firstof request.path '/' %}">Login to review</a>
+          {% else %}
+
           {% if error_message %}<p class="w3-text-black"><strong>{{ error_message }}</strong></p>
           {% endif %}
 
@@ -203,7 +207,7 @@
         </i>Submit My Review</button>
         </form>
       </p>
-
+      {% endif %}
 
       <!-- End Review -->
         </div>

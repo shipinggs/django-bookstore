@@ -12,7 +12,7 @@
 <ul>
   <li><a class="active" href="{% url 'bookstore:home' %}">Home</a></li>
   <li><a href="{% url 'bookstore:cart' %}">Cart</a></li>
-  <li><a href="{% url 'bookstore:login' %}">Login</a></li>
+  <li><a href="{% url 'bookstore:login' %}?next={% firstof request.path '/' %}">Login</a></li>
   <li><a href="{% url 'bookstore:register' %}">Register</a></li>
   <li><a href="{% url 'bookstore:account' %}">Account</a></li>
 <li>
