@@ -16,10 +16,6 @@ from django.http import HttpResponseRedirect
 
 from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm
 
-def cart(request):
-    #TODO: add functionality
-    return HttpResponse('<h1>You are at cart page</h1>')
-
 def home(request):
     #TODO: add functionality
     return render(request, 'bookstore/index.html')
@@ -159,6 +155,12 @@ class BookstoreAdminView(UserPassesTestMixin, View):
 
     def test_func(self):
         return self.request.user.is_staff
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+class CartView(View):
+    template_name = 'bookstore/cart.html'
 
     def get(self, request):
         return render(request, self.template_name)
