@@ -1,5 +1,5 @@
 {% extends 'bookstore/base.html' %}
-{% block title %}Your Account{% endblock %}
+{% block title %}Logout{% endblock %}
 
 {% block body %}
   <div class="container-fluid">
@@ -7,10 +7,7 @@
       <div class="col-sm-12 col-md-7">
         <div class="panel panel-default">
           <div class="panel-body">
-            <h3>Your Account View</h3>
-            {% if not user.is_anonymous %}
-            <h5>You are logged on as {{ user.username }}</h5>
-            {% endif %}
+            <h3>You have successfully logged out.</h3>
           </div>
         </div>
       </div>

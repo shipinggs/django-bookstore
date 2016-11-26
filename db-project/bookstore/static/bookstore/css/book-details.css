@@ -15,7 +15,7 @@
   display         : block;
   float           : right;
   position        : relative;
-  background      : url('../img/star-off.svg');
+  background      : url('../../img/star-off.svg');
   background-size : contain;
 }
 
@@ -24,7 +24,7 @@
   display         : block;
   width           : 1.5em;
   height          : 1.5em;
-  background      : url('../img/star-on.svg');
+  background      : url('../../img/star-on.svg');
   background-size : contain;
   opacity         : 0;
   transition      : opacity 0.2s linear;
@@ -53,7 +53,7 @@
   display         : block;
   float           : right;
   position        : relative;
-  background      : url('../img/star-off2.svg');
+  background      : url('../../img/star-off2.svg');
   background-size : contain;
 }
 
@@ -62,7 +62,7 @@
   display         : block;
   width           : 1.5em;
   height          : 1.5em;
-  background      : url('../img/star-on2.svg');
+  background      : url('../../img/star-on2.svg');
   background-size : contain;
   opacity         : 0;
   transition      : opacity 0.2s linear;

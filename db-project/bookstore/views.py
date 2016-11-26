@@ -7,9 +7,9 @@ import datetime
 
 from django.views import generic
 from django.views.generic import View
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -211,6 +211,13 @@ class RegistrationFormView(View):
         return render(request, self.template_name, {
             'forms': [user_form, profile_form]
         })
+
+class LogoutView(View):
+    template_name = 'bookstore/logout.html'
+
+    def get(self, request):
+        logout(request)
+        return render(request, self.template_name)
 
 
 class LoginFormView(View):

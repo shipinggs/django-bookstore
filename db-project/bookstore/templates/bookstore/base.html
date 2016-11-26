@@ -5,38 +5,69 @@
     <title>The Bookstore | {% block title %}{% endblock %}</title>
     {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="{% static 'bookstore/bootstrap.min.css' %}" media="screen">
+    <link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/bootstrap.min.css' %}" media="screen">
+    <link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/style.css' %}" media="screen">
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/header.css'  %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/sidescroll.css'  %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/gridimg.css'  %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/searchbar.css'  %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bookstore/style.css' %}" media="screen">
     {% block stylesheet %}{% endblock %}
 
   </head>
   <body>
-    <ul>
-      <li><a class="active" href="{% url 'bookstore:home' %}">Home</a></li>
-      <li><a href="{% url 'bookstore:cart' %}">Cart</a></li>
-      <li><a href="{% url 'bookstore:login' %}?next={% firstof request.path '/' %}">Login</a></li>
-      <li><a href="{% url 'bookstore:register' %}">Register</a></li>
-      <li><a href="{% url 'bookstore:account' %}">Account</a></li>
-    <li>
-    	<div id="tfheader">
-    		<form id="tfnewsearch" method="get" action="{% url 'bookstore:search' %}">
-          <label for="search_value">Search: </label>
-          <input id="search_value" type="text" name="search_value" maxlength="100" />
-    		        <!-- <input type="text" class="tftextinput" name="search" size="21" maxlength="120"> -->
-                <input type="submit" value="Submit">
-    		</form>
-    	</div>
-    </li>
-    </ul>
+    <nav class="navbar navbar-inverse navbar-static-top">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'bookstore:home' %}">Home</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+
+          <form class="navbar-form navbar-left" method="get" action="{% url 'bookstore:search' %}">
+            <div class="form-group">
+              <input type="text" class="form-control" name="search_value" maxlength="100" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            {% if not user.is_anonymous %}
+            <li><a href="{% url 'bookstore:cart' %}">Cart</a></li>
+            <li><a href="{% url 'bookstore:account' %}">Account</a></li>
+            <li><a href="{% url 'bookstore:logout' %}">Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'bookstore:login' %}?next={% firstof request.path '/' %}">Login</a></li>
+            <li><a href="{% url 'bookstore:register' %}">Register</a></li>
+            {% endif %}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
 
     {% block body %}
     {% endblock %}
 
+    <script type='text/javascript' src="{% static 'bookstore/js/jquery-3.1.1.min.js' %}"></script>
+    <script type='text/javascript' src="{% static 'bookstore/js/bootstrap.min.js' %}"></script>
 
   </body>
 </html>

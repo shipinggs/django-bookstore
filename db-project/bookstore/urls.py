@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^cart$', views.CartView.as_view(), name='cart'),
     url(r'^home$', views.home, name='home'),
     url(r'^login$', views.LoginFormView.as_view(), name='login'),
+    url(r'^logout$', views.LogoutView.as_view(), name='logout'),
     url(r'^register$', views.RegistrationFormView.as_view(), name='register'),
     url(r'^book/(?P<bid>[a-zA-Z0-9]+)$', views.book_details, name = 'book_details'),
  	url(r'^book/(?P<bid>[a-zA-Z0-9]+)/add-to-cart$', views.add_to_cart, name = 'add_to_cart'),

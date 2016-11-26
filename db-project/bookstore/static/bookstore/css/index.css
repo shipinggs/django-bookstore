@@ -1,3 +1,21 @@
+/*header*/
+header {
+	width: 800px;
+	margin: 40px auto;
+}
+
+header h1 {
+	text-align: center;
+	font: 100 60px/1.5 Helvetica, Verdana, sans-serif;
+
+}
+
+header p {
+	font: 100 15px/1.5 Helvetica, Verdana, sans-serif;
+	text-align: justify;
+}
+
+
 #rig {
     max-width:1400px;
     margin:0 auto; /*center aligned*/
@@ -5,6 +23,8 @@
     font-size:0; /* Remember to change it back to normal font size if have captions */
     list-style:none;
     background-color:#000;
+    overflow: hidden;
+
 }
 #rig li {
     display: inline-block;
@@ -14,6 +34,15 @@
     box-sizing:border-box;
     margin:0;
     padding:0;
+    float: left;
+}
+
+#rig li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
 }
 
 /* The wrapper for each item */
@@ -53,7 +82,7 @@
     bottom: 0;
     right: 0;
     margin: auto;
-    background: #3DC0F1 url(img/link.png) no-repeat center 20%;
+    background: #3DC0F1;
     background-size:50px 50px;
     opacity:0;
     filter:alpha(opacity=0);/*For IE6 - IE8*/
