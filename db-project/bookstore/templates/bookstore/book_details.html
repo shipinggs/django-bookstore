@@ -54,10 +54,11 @@
           <div>
           <p align="center">
           	<form id="addtocart" method="post" action="{% url 'bookstore:add_to_cart' book.isbn10 %}">
-          	{% csrf_token %}
-			<button type='submit' value="Add To Cart" class="w3-btn-block w3-yellow w3-hover-khaki" style="font-family: 'Roboto';" text-align: left><i class="fa fa-shopping-cart fa-fw w3-margin-right w3-large w3-text-black">
-			</i> Add To Cart</button>
-			</form>
+            	{% csrf_token %}
+          			<button type='submit' value="Add To Cart" class="w3-btn-block w3-yellow w3-hover-khaki" style="font-family: 'Roboto';" text-align: left>
+                  <i class="fa fa-shopping-cart fa-fw w3-margin-right w3-large w3-text-black"></i> Add To Cart
+                </button>
+      			</form>
 		  </p>
 
 		  <div id="content-left">
@@ -143,7 +144,7 @@
 	        <label for="rating1">1</label>
 		    </span>
 		    <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{rating}}/10 stars</h6>
-      
+
 
 		    </p>
 
@@ -197,12 +198,12 @@
         <br><br>
         <textarea cols="50" rows="5" style="width:100%" name="ureview" placeholder="What do you think of the book?"></textarea>
         <br><br>
-        
+
         <button type='submit' value="review" class="w3-btn w3-lightgray w3-hover-grey" style="font-family: 'Roboto';" text-align: left><i class="fa-fw w3-large w3-text-black">
         </i>Submit My Review</button>
         </form>
       </p>
-        
+
 
       <!-- End Review -->
         </div>
