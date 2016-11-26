@@ -5,7 +5,9 @@ html {
 
 body {
     margin: 0;
+    padding-bottom: 100px;
     min-height: 100%;
-    background: white url("images/mountains.jpg") no-repeat right bottom;
-    background-size: cover;
+    /*background: white url("images/mountains.jpg") no-repeat right bottom;*/
+    /*background-size: cover;*/
+    background-color: #f7f7f7;
 }

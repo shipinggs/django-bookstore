@@ -2,8 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}Bookstore App{% endblock %}</title>
+    <title>The Bookstore | {% block title %}{% endblock %}</title>
     {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{% static 'bookstore/bootstrap.min.css' %}" media="screen">
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/header.css'  %}">
@@ -11,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/gridimg.css'  %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/searchbar.css'  %}">
     <link rel="stylesheet" type="text/css" href="{% static 'bookstore/style.css' %}" media="screen">
+    {% block stylesheet %}{% endblock %}
 
   </head>
   <body>
@@ -34,5 +36,7 @@
 
     {% block body %}
     {% endblock %}
+
+
   </body>
 </html>

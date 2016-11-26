@@ -9,18 +9,12 @@ from django.views import generic
 from django.views.generic import View
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
+
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
 from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm
-
-def account(request):
-    #TODO: add functionality
-    return HttpResponse('<h1>You are at account page</h1>')
-
-def admin(request):
-    #TODO: add functionality
-    return HttpResponse('<h1>You are at admin page</h1>')
 
 def cart(request):
     #TODO: add functionality
@@ -151,6 +145,23 @@ def add_to_cart(request, bid):
     #shopcart = ShoppingCart(login_name=, isbn13=book.isbn13, num_order=1,order_date=datetime.date)
     #shopcart.save()
     return HttpResponseRedirect(reverse('bookstore:home'))
+
+
+class AccountView(View):
+    template_name = 'bookstore/account.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+class BookstoreAdminView(UserPassesTestMixin, View):
+    raise_exception = True
+    template_name = 'bookstore/bookstore-admin.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get(self, request):
+        return render(request, self.template_name)
 
 
 class RegistrationFormView(View):

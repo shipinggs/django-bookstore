@@ -4,8 +4,9 @@ from . import views
 
 app_name = 'bookstore'
 urlpatterns = [
-    url(r'^account$', views.account, name='account'),
-    url(r'^admin$', views.admin, name='admin'),
+    url(r'^$', views.home, name='home'),
+    url(r'^account$', views.AccountView.as_view(), name='account'),
+    url(r'^admin$', views.BookstoreAdminView.as_view(), name='admin'),
     url(r'^cart$', views.cart, name='cart'),
     url(r'^home$', views.home, name='home'),
     url(r'^login$', views.LoginFormView.as_view(), name='login'),

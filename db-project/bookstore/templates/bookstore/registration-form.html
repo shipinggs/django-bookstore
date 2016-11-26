@@ -2,11 +2,18 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
+
+
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-12 col-md-7">
         <div class="panel panel-default">
           <div class="panel-body">
+            
+            {% if not user.is_anonymous %}
+            <h5>You are currently logged in as {{user.username}}</h5>
+            {% endif %}
+
             <h3>Create a new account</h3>
             {% if error_message %}
               <p>
