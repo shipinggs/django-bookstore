@@ -1,18 +1,7 @@
 /*header*/
-header {
-	width: 800px;
-	margin: 40px auto;
-}
-
-header h1 {
-	text-align: center;
-	font: 100 60px/1.5 Helvetica, Verdana, sans-serif;
-
-}
-
-header p {
-	font: 100 15px/1.5 Helvetica, Verdana, sans-serif;
-	text-align: justify;
+.home__header {
+    margin: 40px auto;
+    text-align: center;
 }
 
 
