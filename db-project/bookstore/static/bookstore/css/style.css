@@ -27,3 +27,9 @@ body {
     color: #e8e8e8;
     letter-spacing: 0.05em;
 }
+
+
+.navbar .btn-dark:hover {
+    background-color: #455A64;
+    color: #f7f7f7;
+}
