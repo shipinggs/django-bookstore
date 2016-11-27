@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Book
+from .models import Book, Review
 import urllib
 import xmltodict
 import datetime
@@ -10,6 +10,7 @@ from django.views.generic import View
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.contrib.auth.models import User
 
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -78,6 +79,12 @@ def search(request):
 
 def book_details(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
+    reviews = Review.objects.filter(isbn13=book.isbn13)
+    avg_score = 0
+    if reviews:
+        for review in reviews:
+            avg_score += review.review_score
+        avg_score = avg_score/len(reviews)
 
     uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
     try:
@@ -91,18 +98,17 @@ def book_details(request, bid):
         print ('excepted yo')
         book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
 
-    rating = 4
     uscore = 5
-    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating': rating, 'uscore':uscore})
+    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': avg_score, 'uscore':uscore})
 
 @login_required
 def review(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
-    rating = 4
     #TODO: Check if user is currently logged in, if not redirect to login page
 
-    #get username uname = ''
+    #get username uname = '' 
     username = request.user.username
+    user = User.objects.get(username=username)
     full_name = request.user.first_name + ' ' + request.user.last_name
 
 
@@ -111,7 +117,15 @@ def review(request, bid):
     #Check if review was submitted
     ureview = request.POST['ureview']
     if ureview == '':
+        book = get_object_or_404(Book, isbn10=bid)
         uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
+        uscore = 5
+        reviews = Review.objects.filter(isbn13=book.isbn13)
+        avg_score = 0
+        if reviews:
+            for review in reviews:
+                avg_score += review.review_score
+            avg_score = avg_score/len(reviews)
         try:
             f = urllib.request.urlopen(uri)
             data = f.read()
@@ -123,11 +137,11 @@ def review(request, bid):
         except:
             print ('excepted yo')
             book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
-        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating':rating, 'error_message':"Please enter a valid review!"})
+        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':avg_score, 'uscore':uscore, 'error_message':"Please enter a valid review!"})
 
     #if user has valid review, insert into Review table
-    #review = Review(login_name=, isbn13=book.isbn13, review_score=uscore, review_text=ureview, review_date=datetime.date)
-    #review.save()
+    review = Review(login_name=user, isbn13=book, review_score=uscore, review_text=ureview, review_date=datetime.date.today())
+    review.save()
     return render(request, 'bookstore/review_success.html', {'book':book})
 
 @login_required

@@ -90,37 +90,39 @@
       <div class="w3-container w3-card-2 w3-white w3-margin-bottom">
         <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-book fa-fw w3-margin-right w3-xxlarge w3-text-dark-grey"></i>{{book.title}}</h2>
         <div class="w3-container">
-          <h5 class="w3-opacity"><b>by {{book.author}}</b></h5>
-          <h6 class="w3-text-teal"><i class="fa-fw"></i>Summary: {{book.keyword}}</h6>
+          <h5 class="w3-opacity"><b>by {{book.author}}</b></h5> 
+          <h6 class="w3-text-teal w3-xlarge"><i class="fa-fw"></i>Summary: {{book.keyword}}</h6>
+          <br>
          <p>
          	<h6 class="w3-text-grey w3-large" style="display:inline"><i class="fa fa-bar-chart-o fa-fw"></i>Rating 	&nbsp;</h6>
 
            <!-- Rating Stars -->
 
           <span class="starRating">
-          	<input id="rating10" type="radio" name="rating" value="10" disabled {% if rating == 10 %}checked{%endif%}>
+          	<input id="rating10" type="radio" name="rating" value="10" disabled {% if avg_score == 10 %}checked{%endif%}>
         	<label for="rating10">10</label>
-          	<input id="rating9" type="radio" name="rating" value="9" disabled {% if rating == 9 %}checked{%endif%}>
+          	<input id="rating9" type="radio" name="rating" value="9" disabled {% if avg_score == 9 %}checked{%endif%}>
         	<label for="rating9">9</label>
-          	<input id="rating8" type="radio" name="rating" value="8" disabled {% if rating == 8 %}checked{%endif%}>
+          	<input id="rating8" type="radio" name="rating" value="8" disabled {% if avg_score == 8 %}checked{%endif%}>
         	<label for="rating8">8</label>
-          	<input id="rating7" type="radio" name="rating" value="7" disabled {% if rating == 7 %}checked{%endif%}>
+          	<input id="rating7" type="radio" name="rating" value="7" disabled {% if avg_score == 7 %}checked{%endif%}>
         	<label for="rating7">7</label>
-          	<input id="rating6" type="radio" name="rating" value="6" disabled {% if rating == 6 %}checked{%endif%}>
+          	<input id="rating6" type="radio" name="rating" value="6" disabled {% if avg_score == 6 %}checked{%endif%}>
         	<label for="rating6">6</label>
-			    <input id="rating5" type="radio" name="rating" value="5" disabled {% if rating == 5 %}checked{%endif%}>
+			    <input id="rating5" type="radio" name="rating" value="5" disabled {% if avg_score == 5 %}checked{%endif%}>
         	<label for="rating5">5</label>
-        	<input id="rating4" type="radio" name="rating" value="4" disabled {% if rating == 4 %}checked{%endif%}>
+        	<input id="rating4" type="radio" name="rating" value="4" disabled {% if avg_score == 4 %}checked{%endif%}>
 	        <label for="rating4">4</label>
-	        <input id="rating3" type="radio" name="rating" value="3" disabled {% if rating == 3 %}checked{%endif%}>
+	        <input id="rating3" type="radio" name="rating" value="3" disabled {% if avg_score == 3 %}checked{%endif%}>
 	        <label for="rating3">3</label>
-	        <input id="rating2" type="radio" name="rating" value="2" disabled {% if rating == 2 %}checked{%endif%}>
+	        <input id="rating2" type="radio" name="rating" value="2" disabled {% if avg_score == 2 %}checked{%endif%}>
 	        <label for="rating2">2</label>
-	        <input id="rating1" type="radio" name="rating" value="1" disabled {% if rating == 1 %}checked{%endif%}>
+	        <input id="rating1" type="radio" name="rating" value="1" disabled {% if avg_score == 1 %}checked{%endif%}>
 	        <label for="rating1">1</label>
 		    </span>
-		    <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{rating}}/10 stars</h6>
-
+		    <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{avg_score}}/10 stars</h6>
+        {% if avg_score == 0 %}<p class="w3-text-black"><strong>No users have reviewed this book. Be the first!</strong></p>
+          {% endif %}
 
 		    </p>
 
