@@ -136,7 +136,7 @@ def add_to_cart(request, bid):
 
     #TODO: Check if user is logged in, get user id
     user_id = request.user.id
-    print user_id
+    print (user_id)
     #Insert to shopping cart
     #shopcart = ShoppingCart(login_name=, isbn13=book.isbn13, num_order=1,order_date=datetime.date)
     #shopcart.save()
