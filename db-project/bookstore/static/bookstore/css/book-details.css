@@ -73,3 +73,47 @@
 .starRating-n:not(:hover) > :checked ~ label:before{
   opacity : 1;
 }
+
+#container-1{
+  overflow: hidden;
+  width:100%;
+}
+
+#content-left{
+  float: left;
+  width: 40%;
+  padding-bottom: 500em;
+  margin-bottom: -500em;
+  height: auto;
+}
+
+#content-right {
+  float: left;
+  width: 60%;
+  text-align: left;
+  height: auto;
+  padding-bottom: 500em;
+  margin-bottom: -500em;
+  
+}
+
+#content-left-no-icon{
+  float: left;
+  width: 40%;
+  padding-left: 6.3%;
+} 
+
+#content-left-year{
+  float: left;
+  width: 40%;
+  /*background-color: #DDD;
+  */
+}
+
+#content-right-year{
+  float: right;
+  width: 60%;
+  text-align: left;
+  /*background-color: #DDD;
+  */
+}

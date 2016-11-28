@@ -124,3 +124,10 @@
         width:50%;
     }
 }
+
+.header-bg{
+    border-radius: 25px;
+    margin-right: 10%;
+    margin-left: 10%;
+    text-align: center;
+}
