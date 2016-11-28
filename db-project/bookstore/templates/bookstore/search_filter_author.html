@@ -1,0 +1,41 @@
+{% extends 'bookstore/base.html' %}
+{% block title %}Search Results{% endblock %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/search-results.css'  %}">
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>Search Results</h1>
+    </div>
+  </div>
+  <div class="sort-by">
+    <p>Sort by:</p>
+    <p>Author | </p>
+    <a href="#">Year</a>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      {% for book in books|dictsort:"data.author"%}
+            <div>
+              <nav>
+                <img src={{book.data.url}}>
+              </nav>
+            <!-- dict sort django -->
+            <article>
+              <ul>
+                <li>Title: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.title }}</a></li>
+                <li>Author: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.author }}</a></li>
+                <li>Publisher: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.publisher }}</a></li>
+                <li>Year: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.year }}</a></li>
+            </ul>
+            </article>
+          </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
