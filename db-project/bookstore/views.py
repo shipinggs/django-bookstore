@@ -16,23 +16,26 @@ from django.http import HttpResponseRedirect
 
 from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm
 
+isbn_list_of_dicts = []
+
 def home(request):
     #TODO: add functionality
     return render(request, 'bookstore/index.html')
 
 
-def search(request):
+def search(request, key):
     #TODO: add response to search function
     """Book search based on authors, and/or publisher, and/or title, and/or subjec"""
     if request.method == 'GET':
         # create a form instance and populate it with data from the request:
         form = SearchForm(request.GET)
-        isbn_dict = {}
+        # print (request.GET['search_value'])
+        isbn_list_of_dicts = []
 
         # check whether it's valid:
         if form.is_valid():
-            isbn_dict = {}
-            img_dict = {}
+            temp_dict = {}
+            print (form.cleaned_data)
             search_values = form.cleaned_data['search_value'].split(" ")
             search_values = list(filter(None, search_values))
             print (search_values)
@@ -51,13 +54,13 @@ def search(request):
                 temp.extend(search_subject.values_list('isbn10', flat=True))
 
                 for j in temp:
-                    if j in isbn_dict:
-                        isbn_dict[j] += 1
+                    if j in temp_dict:
+                        temp_dict[j][0] += 1
                     else:
-                        isbn_dict[j] = 1
-            print (isbn_dict)
+                        temp_dict[j] = [1]
+            print (temp_dict)
 
-            for i in isbn_dict:
+            for i in temp_dict:
                 uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s"%(str(i))
                 try:
                     f = urllib.request.urlopen(uri)
@@ -71,10 +74,27 @@ def search(request):
                     print ('excepted yo')
                     book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
                 finally:
-                    img_dict[i] = book_img
+                    temp_dict[i].append(book_img)
 
-    print (img_dict)
-    return render(request, 'bookstore/search_results.html', {'books': isbn_dict, 'book_imgs': img_dict})
+            for i in temp_dict:
+                temp_dict[i].append(get_object_or_404(Book, isbn10=i))
+
+            for i in temp_dict:
+                append_this_dict = {'isbn10': i, 'data': {  'hits': temp_dict[i][0],
+                                                            'url': temp_dict[i][1],
+                                                            'title': temp_dict[i][2].title,
+                                                            'publisher': temp_dict[i][2].publisher,
+                                                            'year': temp_dict[i][2].years,
+                                                            'author': temp_dict[i][2].author}}
+                isbn_list_of_dicts.append(append_this_dict)
+    print (isbn_list_of_dicts)
+    request.session['isbn_list_of_dicts'] = isbn_list_of_dicts
+    return render(request, 'bookstore/search_results.html', {'books': request.session['isbn_list_of_dicts']})
+
+def search_filter_author(request, key):
+    print (request.session)
+    print (request.session['isbn_list_of_dicts'])
+    return render(request, 'bookstore/search_filter_author.html', {'books': request.session['isbn_list_of_dicts']})
 
 def book_details(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
