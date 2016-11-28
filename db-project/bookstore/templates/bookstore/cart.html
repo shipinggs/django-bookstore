@@ -1,8 +1,97 @@
 {% extends 'bookstore/base.html' %}
 {% block title %}Cart{% endblock %}
+{% load staticfiles %}
+
+{% block stylesheet %}
+<link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/cart-style.css'  %}" />
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+{% endblock %}
 
 {% block body %}
-  <div class="container-fluid">
+<div class="w3-third">
+  <div class="w3-container w3-card w3-white w3-margin-bottom w3-margin-left">
+    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-shopping-cart fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Your Cart</h2>
+    <form method="post" action="{% url 'bookstore:order' %}">
+      {% csrf_token %}
+      {% if cart %}
+      {% for item in cart %}
+        <div class="w3-container">
+        {% for b in books_in_cart %}
+          {% if item.isbn13.isbn13 == b.isbn13 %}
+            <h5 class="w3-xlarge"><b>{{b.title}}</b></h5>
+            {% for k,v in img_dict.items %}
+              {% if k == b.isbn13 %}
+              <img style="margin-bottom:10px" src={{v}}>
+              {% endif %}
+            {% endfor %}
+            <br>
+            <p style="text-align=right" class="w3-right w3-text-dark-grey">
+            Copies:  <input type="number" value="{{item.num_order}}" id="new_orders" style="width=50%" name="{{b.isbn13}}"></p>
+            <br>
+            <hr>
+          {% endif %}
+        {% endfor %}
+        </div>
+      {% endfor %}
+    <button style="float:right" type="submit" class="w3-margin-right w3-margin-bottom w3-btn">Submit</button>
+
+    {% else %}
+    <p class="w3-text-black"><strong>You currently do not have any books in your cart</strong></p>
+    {% endif %}
+    </form>
+  </div>
+</div>
+
+ <!-- End left column -->
+
+  <!-- Start Right Column -->
+
+<div class="w3-twothird">
+  <div class="w3-container w3-card w3-white w3-margin-bottom w3-margin-left w3-margin-right">
+    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-book fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Orders Placed</h2>
+
+    {% for item in orders %}
+   
+        <div class="w3-container">
+        {% for b in books_ordered %}
+        
+          {% if item.isbn13.isbn13 == b.isbn13 %}
+          
+            <h5 class="w3-large"><b>{{b.title}}</b></h5>
+            
+            <br>
+
+            <p style="text-align=left" class="w3-left w3-text-dark-grey">
+            <div class="w3-container">
+              <p class="w3-left w3-text-dark-grey">ISBN13: {{b.isbn13}}</p>
+            </div>
+            <div class="w3-container">
+              <p class="w3-left w3-text-dark-grey">ISBN10: {{b.isbn10}}</p>
+            </div>
+            <div class="w3-container">
+              <p class="w3-left w3-text-dark-grey">Date Ordered: {{item.order_date}}</p>
+            </div>
+            <div class="w3-container">
+              <p class="w3-left w3-text-dark-grey">Order Status: {{item.order_status}}</p>
+            </div>
+            <div class="w3-container w3-left w3-large">
+              Copies Ordered:<b class="w3-text-grey"> {{item.num_order}}</b></p>
+            </div>
+            
+
+            <br>
+            <hr>
+          {% endif %}
+        {% endfor %}
+        </div>
+      {% endfor %}
+
+  </div>
+</div>
+
+<!--   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-12 col-md-7">
         <div class="panel panel-default">
@@ -12,5 +101,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Book
+from .models import Book, Review, ShoppingCart, CustomerOrder
 import urllib
 import xmltodict
 import datetime
@@ -10,6 +10,7 @@ from django.views.generic import View
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.contrib.auth.models import User
 
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -98,7 +99,16 @@ def search_filter_author(request, key):
 
 def book_details(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
-
+    reviews = Review.objects.filter(isbn13=book.isbn13)
+    username = request.user.username
+    user = User.objects.get(username=username)
+    avg_score = 0
+    uscore = 5
+    if reviews:
+        for review in reviews:
+            avg_score += review.review_score
+        avg_score = avg_score/len(reviews)
+    rounded_score = round(avg_score)
     uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
     try:
         f = urllib.request.urlopen(uri)
@@ -111,18 +121,17 @@ def book_details(request, bid):
         print ('excepted yo')
         book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
 
-    rating = 4
-    uscore = 5
-    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating': rating, 'uscore':uscore})
+    
+    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': rounded_score, 'uscore':uscore, 'reviews':reviews})
 
 @login_required
 def review(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
-    rating = 4
     #TODO: Check if user is currently logged in, if not redirect to login page
 
-    #get username uname = ''
+    #get username uname = '' 
     username = request.user.username
+    user = User.objects.get(username=username)
     full_name = request.user.first_name + ' ' + request.user.last_name
 
 
@@ -131,23 +140,31 @@ def review(request, bid):
     #Check if review was submitted
     ureview = request.POST['ureview']
     if ureview == '':
+        book = get_object_or_404(Book, isbn10=bid)
         uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
+        uscore = 5
+        reviews = Review.objects.filter(isbn13=book.isbn13)
+        avg_score = 0
+        if reviews:
+            for review in reviews:
+                avg_score += review.review_score
+            avg_score = avg_score/len(reviews)
+            rounded_score = round(avg_score)
         try:
             f = urllib.request.urlopen(uri)
             data = f.read()
             f.close()
             data = xmltodict.parse(data)
-
             #print (data['GoodreadsResponse']['book']['image_url'])
             book_img = data['GoodreadsResponse']['book']['image_url']
         except:
             print ('excepted yo')
             book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
-        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'rating':rating, 'error_message':"Please enter a valid review!"})
+        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':rounded_score, 'uscore':uscore, 'error_message':"Please enter a valid review!"})
 
     #if user has valid review, insert into Review table
-    #review = Review(login_name=, isbn13=book.isbn13, review_score=uscore, review_text=ureview, review_date=datetime.date)
-    #review.save()
+    review = Review(login_name=user, isbn13=book, review_score=uscore, review_text=ureview, review_date=datetime.date.today())
+    review.save()
     return render(request, 'bookstore/review_success.html', {'book':book})
 
 @login_required
@@ -155,12 +172,12 @@ def add_to_cart(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
 
     #TODO: Check if user is logged in, get user id
-    user_id = request.user.id
-    print (user_id)
+    username = request.user.username
     #Insert to shopping cart
-    #shopcart = ShoppingCart(login_name=, isbn13=book.isbn13, num_order=1,order_date=datetime.date)
-    #shopcart.save()
-    return HttpResponseRedirect(reverse('bookstore:home'))
+    shopcart = ShoppingCart(login_name=User.objects.get(username=username), isbn13=book, num_order=1,order_date=datetime.date.today())
+    shopcart.save()
+
+    return render(request, 'bookstore/index.html', {'book_in_cart': book.title})
 
 
 class AccountView(View):
@@ -183,9 +200,52 @@ class CartView(View):
     template_name = 'bookstore/cart.html'
 
     def get(self, request):
-        return render(request, self.template_name)
+        user = request.user
+        cart = ShoppingCart.objects.filter(login_name=user.id)
+        books_in_cart = Book.objects.filter(isbn13__in=cart.values('isbn13'))
+        orders = CustomerOrder.objects.filter(login_name=user.id)
+        books_ordered = Book.objects.filter(isbn13__in=orders.values('isbn13'))
 
+        content = {'cart':cart, 'books_in_cart':books_in_cart, 'orders': orders, 'books_ordered':books_ordered}
+        img_dict = {}
+        for item in cart:
+            for b in books_in_cart:
+                if item.isbn13.isbn13 == b.isbn13:
+                    try:
+                        uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(b.isbn10))
+                        f = urllib.request.urlopen(uri)
+                        data = f.read()
+                        f.close()
+                        data = xmltodict.parse(data)
+                        #print (data['GoodreadsResponse']['book']['image_url'])
+                        book_img = data['GoodreadsResponse']['book']['image_url']
+                    except:
+                        print ('excepted yo')
+                        book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
+                    finally:
+                        img_dict[b.isbn13] = book_img
+        content['img_dict'] = img_dict
+        return render(request, self.template_name, content)
 
+class OrderView(View):
+
+    def post(self, request):
+        username = request.user.username
+        print(request.POST)
+        for k,v in request.POST.items():
+            if len(k)== 13:
+                user = User.objects.get(username=username)
+                book = Book.objects.get(isbn13=k)
+                order_status = "Processed"
+                order = CustomerOrder(login_name=user, isbn13=book, num_order=int(v), order_date=datetime.date.today()+datetime.timedelta(1), order_status=order_status)
+                order.save()
+
+                ShoppingCart.objects.filter(login_name=user).delete()
+
+        return HttpResponseRedirect(reverse('bookstore:cart'))
+
+    def get(self, request):
+        return HttpResponseRedirect(reverse('bookstore:cart'))
 class RegistrationFormView(View):
     user_form_class = UserRegistrationForm
     profile_form_class = ProfileForm

@@ -4,17 +4,21 @@
 
 {% block stylesheet %}
 <link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/index.css'  %}">
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 {% endblock %}
 
 {% block body %}
 
 <div class="home__header container">
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-12" style="background:yellow border-radius:25px">
+      {% if book_in_cart %}
+      <h4 class="w3-khaki header-bg">You have successfully added {{book_in_cart}} into Cart</h4>
+      {% endif %}
       <h1>The Bookstore</h1>
       <h5>For readers, By readers.</h5>
       {% if not user.is_anonymous %}
-        <h3>Hello {{ user.first_name }}</h3>
+        <h3 style="clear:left">Hello {{ user.first_name }}</h3>
       {% endif %}
     </div>
   </div>
