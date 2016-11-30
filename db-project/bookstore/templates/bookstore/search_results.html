@@ -20,6 +20,7 @@
   <div class="row">
     <div class="col-sm-12">
       {% for book in books|dictsortreversed:"data.hits"%}
+      <div class="perrow">
             <div id="column1">
                 <img src={{book.data.url}}>
             <!-- dict sort django -->
@@ -31,6 +32,7 @@
               Year: {{ book.data.year }}
         </div>
         <div class="clear"></div>
+      </div>
       {% endfor %}
     </div>
   </div>
