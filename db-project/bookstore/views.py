@@ -11,9 +11,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+
+from django.db import IntegrityError
 
 from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm
 
@@ -143,8 +146,14 @@ def review(request, bid):
         return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':rounded_score, 'uscore':uscore, 'error_message':"Please enter a valid review!"})
 
     #if user has valid review, insert into Review table
-    review = Review(login_name=user, isbn13=book, review_score=uscore, review_text=ureview, review_date=datetime.date.today())
-    review.save()
+    try:
+        review = Review(login_name=user, isbn13=book, review_score=uscore, review_text=ureview, review_date=datetime.date.today())
+        review.save()
+    except IntegrityError as e:
+        messages.add_message(request, messages.INFO, "You already reviewed this item!")
+       
+        return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
+
     return render(request, 'bookstore/review_success.html', {'book':book})
 
 @login_required
@@ -154,8 +163,14 @@ def add_to_cart(request, bid):
     #TODO: Check if user is logged in, get user id
     username = request.user.username
     #Insert to shopping cart
-    shopcart = ShoppingCart(login_name=User.objects.get(username=username), isbn13=book, num_order=1,order_date=datetime.date.today())
-    shopcart.save()
+    try:
+        shopcart = ShoppingCart(login_name=User.objects.get(username=username), isbn13=book, num_order=1,order_date=datetime.date.today())
+        shopcart.save()
+    except IntegrityError as e:
+        # messages.error(request, "You already have this book in your cart!")
+        messages.add_message(request, messages.ERROR, "You already have this book in your cart!")
+       
+        return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
 
     return render(request, 'bookstore/index.html', {'book_in_cart': book.title})
 
@@ -213,19 +228,24 @@ class OrderView(View):
         username = request.user.username
         print(request.POST)
         for k,v in request.POST.items():
-            if len(k)== 13:
-                user = User.objects.get(username=username)
-                book = Book.objects.get(isbn13=k)
-                order_status = "Processed"
-                order = CustomerOrder(login_name=user, isbn13=book, num_order=int(v), order_date=datetime.date.today()+datetime.timedelta(1), order_status=order_status)
-                order.save()
+            if "Submit" in request.POST.keys():
+                if len(k)== 13:
+                    user = User.objects.get(username=username)
+                    book = Book.objects.get(isbn13=k)
+                    order_status = "Processed"
+                    order = CustomerOrder(login_name=user, isbn13=book, num_order=int(v), order_date=datetime.date.today()+datetime.timedelta(1), order_status=order_status)
+                    order.save()
 
-                ShoppingCart.objects.filter(login_name=user).delete()
+                    ShoppingCart.objects.filter(login_name=user).delete()
+            else:
+                user = User.objects.get(username=username)
+                ShoppingCart.objects.filter(login_name=user, isbn13=request.POST['remove']).delete()
 
         return HttpResponseRedirect(reverse('bookstore:cart'))
 
     def get(self, request):
         return HttpResponseRedirect(reverse('bookstore:cart'))
+
 class RegistrationFormView(View):
     user_form_class = UserRegistrationForm
     profile_form_class = ProfileForm

@@ -1,3 +1,14 @@
 input[type="number"] {
     width:50px;
 }
+
+p.cart-list1{
+	display: inline-block;
+	background-color: black;
+	font-size: 200;
+
+}
+
+p.cart-submit{
+	display: inline-block;
+}

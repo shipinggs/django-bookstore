@@ -85,11 +85,12 @@
   padding-bottom: 500em;
   margin-bottom: -500em;
   height: auto;
+  margin-right: 5px;
 }
 
 #content-right {
   float: left;
-  width: 60%;
+  width: 55%;
   text-align: left;
   height: auto;
   padding-bottom: 500em;
@@ -101,6 +102,7 @@
   float: left;
   width: 40%;
   padding-left: 6.3%;
+  margin-right: 5px;
 } 
 
 #content-left-year{

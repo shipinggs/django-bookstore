@@ -29,12 +29,32 @@
         <div class="w3-container">
           <div>
           <p align="center">
-          	<form id="addtocart" method="post" action="{% url 'bookstore:add_to_cart' book.isbn10 %}">
-            	{% csrf_token %}
-          			<button type='submit' value="Add To Cart" class="w3-btn-block w3-yellow w3-hover-khaki" style="font-family: 'Roboto';" text-align: left>
+          
+
+            <form id="addtocart" method="post" action="{% url 'bookstore:add_to_cart' book.isbn10 %}">
+              {% csrf_token %}
+              
+                <button type='submit' value="Add To Cart" class="w3-btn-block w3-yellow w3-hover-khaki" style="font-family: 'Roboto';" text-align: left>
+                  
                   <i class="fa fa-shopping-cart fa-fw w3-margin-right w3-large w3-text-black"></i> Add To Cart
                 </button>
-      			</form>
+            </form>
+
+            {% if messages %}
+            <ul class="messages w3-text-grey">
+                {% for message in messages %}
+                    {% if message.tags == "error" %}
+                      <script type="text/javascript">
+                      var elem = document.getElementById("addtocart");
+                        elem.style.display = "none" ;
+                      </script>
+                      <i class="fa-fw w3-text-grey"><strong>You already have this item in your cart!</strong></i>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% endif %}
+          
+          	
 		  </p>
 
 		  <div id="content-left">
@@ -63,17 +83,22 @@
 		  <div id="content-left">
 		  	<p><i class="fa fa-calendar fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>Year Published</strong></p>
 		  </div>
-		  <div id="content-right">
+		  <div id="content-right" class="">
 		  	<p><i class="fa-fw w3-text-teal"></i>{{book.years}}</p>
 		  </div>
 
-          <div id="content-left">
+      <div id="content-left">
 		  	<p><i class="fa fa-sort fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>In Stock</strong></p>
 		  </div>
 		  <div id="content-right">
 		  	<p><i class="fa-fw w3-text-teal"></i>{{book.num_copies}}</p>
 		  </div>
-
+      <div id="content-left">
+        <p><i class="fa fa-money fa-fw w3-margin-right w3-large w3-text-teal"></i><strong>Price</strong></p>
+      </div>
+      <div id="content-right">
+        <p><i class="fa-fw w3-text-teal"></i>${{book.price}}</p>
+      </div>
 		  </div>
 
           </div>
@@ -85,7 +110,7 @@
     </div>
 
     <!-- Right Column -->
-    <div class="w3-twothird">
+    <div id="div2" class="w3-twothird">
 
       <div class="w3-container w3-card-2 w3-white w3-margin-bottom">
         <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-book fa-fw w3-margin-right w3-xxlarge w3-text-dark-grey"></i>{{book.title}}</h2>
@@ -143,11 +168,25 @@
           <a href="{% url 'bookstore:login'%}?next={% firstof request.path '/' %}">Login to review</a>
           {% else %}
 
-          {% if error_message %}<p class="w3-text-black"><strong>{{ error_message }}</strong></p>
-          {% endif %}
+            {% if error_message %}<p class="w3-text-black"><strong>{{ error_message }}</strong></p>
+            {% endif %}
 
-          {% if review_success %}<p class="w3-text-black"><strong>Thank you for your review!</strong></p>
-          {% endif %}
+            {% if review_success %}<p class="w3-text-black"><strong>Thank you for your review!</strong></p>
+            {% endif %}
+
+            {% if messages %}
+              <ul class="messages w3-text-grey">
+                  {% for message in messages %}
+                      {% if message.tags == "info" %}
+                        <script type="text/javascript">
+                        var elem = document.getElementById("addtocart");
+                          elem.style.visibility = "hidden" ;
+                        </script>
+                        <p class=" w3-text-black"><strong>Sorry, you have already reviewed this item!</strong></p>
+                      {% endif %}
+                  {% endfor %}
+              </ul>
+            {% endif %}
           <!-- Second rating stars -->
           <p>
             <h6 class="w3-text-grey" style="display:inline"><i class="fa-fw"></i>Rate me: </h6>

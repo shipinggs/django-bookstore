@@ -20,22 +20,24 @@
         <div class="w3-container">
         {% for b in books_in_cart %}
           {% if item.isbn13.isbn13 == b.isbn13 %}
-            <h5 class="w3-xlarge"><b>{{b.title}}</b></h5>
+            <h5 class="w3-xlarge"><a href="{% url 'bookstore:book_details' b.isbn10 %}"><b>{{b.title}}</b></h5></a>
             {% for k,v in img_dict.items %}
               {% if k == b.isbn13 %}
               <img style="margin-bottom:10px" src={{v}}>
               {% endif %}
             {% endfor %}
             <br>
-            <p style="text-align=right" class="w3-right w3-text-dark-grey">
-            Copies:  <input type="number" value="{{item.num_order}}" id="new_orders" style="width=50%" name="{{b.isbn13}}"></p>
+            <p class="w3-text-dark-grey">Price: ${{b.price}}</p>
+            <button style="float:left" name="remove" value={{b.isbn13}} type="submit" class="w3-margin-right w3-margin-bottom w3-btn w3-yellow">Remove</button>
+            <p style="cart-submit text-align=right" class="w3-right w3-text-dark-grey">
+            Copies:  <input type="number" min="1" value="{{item.num_order}}" id="new_orders" style="width=50%" name="{{b.isbn13}}"></p>
             <br>
             <hr>
           {% endif %}
         {% endfor %}
         </div>
       {% endfor %}
-    <button style="float:right" type="submit" class="w3-margin-right w3-margin-bottom w3-btn">Submit</button>
+    <button style="float:right" name="Submit" value="Submit" type="submit" class="w3-margin-right w3-margin-bottom w3-btn">Submit</button>
 
     {% else %}
     <p class="w3-text-black"><strong>You currently do not have any books in your cart</strong></p>
@@ -59,8 +61,7 @@
         
           {% if item.isbn13.isbn13 == b.isbn13 %}
           
-            <h5 class="w3-large"><b>{{b.title}}</b></h5>
-            
+            <h5 class="w3-large"><u><a href="{% url 'bookstore:book_details' b.isbn10 %}"><b>{{b.title}}</b></u></h5></a>
             <br>
 
             <p style="text-align=left" class="w3-left w3-text-dark-grey">
@@ -74,12 +75,21 @@
               <p class="w3-left w3-text-dark-grey">Date Ordered: {{item.order_date}}</p>
             </div>
             <div class="w3-container">
+              <p class="w3-left w3-text-dark-grey">Total Price:&nbsp </p>
+              <p id={{item.isbn13.isbn13}}>nun</p>
+              
+            </div>
+            <div class="w3-container">
               <p class="w3-left w3-text-dark-grey">Order Status: {{item.order_status}}</p>
             </div>
             <div class="w3-container w3-left w3-large">
               Copies Ordered:<b class="w3-text-grey"> {{item.num_order}}</b></p>
             </div>
-            
+            <script>
+                var c = {{item.isbn13.price}}*{{item.num_order}};
+                document.getElementById({{item.isbn13.isbn13}}).innerHTML='$'+c;
+              
+            </script>
 
             <br>
             <hr>
@@ -90,16 +100,4 @@
 
   </div>
 </div>
-
-<!--   <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-12 col-md-7">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <h3>Your Cart View</h3>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
 {% endblock %}
