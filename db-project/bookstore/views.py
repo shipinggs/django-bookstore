@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book, Review, ShoppingCart, CustomerOrder
+from django.db.models import Q
 import urllib
 import xmltodict
 import datetime
@@ -24,8 +25,9 @@ def home(request):
     return render(request, 'bookstore/index.html')
 
 
-def search(request, key):
+def search(request):
     #TODO: add response to search function
+    print ("here")
     """Book search based on authors, and/or publisher, and/or title, and/or subjec"""
     if request.method == 'GET':
         # create a form instance and populate it with data from the request:
@@ -41,61 +43,78 @@ def search(request, key):
             search_values = list(filter(None, search_values))
             print (search_values)
 
-            # Get isbn hit count from book table
-            for i in search_values:
-                temp = []
-                search_title = Book.objects.filter(title__icontains=i)
-                search_author = Book.objects.filter(author__icontains=i)
-                search_publisher = Book.objects.filter(publisher__icontains=i)
-                search_subject = Book.objects.filter(book_subject__icontains=i)
+            isbn_list_of_dicts = query(search_values)
 
-                temp.extend(search_title.values_list('isbn10', flat=True))
-                temp.extend(search_author.values_list('isbn10', flat=True))
-                temp.extend(search_publisher.values_list('isbn10', flat=True))
-                temp.extend(search_subject.values_list('isbn10', flat=True))
-
-                for j in temp:
-                    if j in temp_dict:
-                        temp_dict[j][0] += 1
-                    else:
-                        temp_dict[j] = [1]
-            print (temp_dict)
-
-            for i in temp_dict:
-                uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s"%(str(i))
-                try:
-                    f = urllib.request.urlopen(uri)
-                    data = f.read()
-                    f.close()
-
-                    data = xmltodict.parse(data)
-                    print (data['GoodreadsResponse']['book']['image_url'])
-                    book_img = data['GoodreadsResponse']['book']['image_url']
-                except:
-                    print ('excepted yo')
-                    book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
-                finally:
-                    temp_dict[i].append(book_img)
-
-            for i in temp_dict:
-                temp_dict[i].append(get_object_or_404(Book, isbn10=i))
-
-            for i in temp_dict:
-                append_this_dict = {'isbn10': i, 'data': {  'hits': temp_dict[i][0],
-                                                            'url': temp_dict[i][1],
-                                                            'title': temp_dict[i][2].title,
-                                                            'publisher': temp_dict[i][2].publisher,
-                                                            'year': temp_dict[i][2].years,
-                                                            'author': temp_dict[i][2].author}}
-                isbn_list_of_dicts.append(append_this_dict)
     print (isbn_list_of_dicts)
     request.session['isbn_list_of_dicts'] = isbn_list_of_dicts
+    request.session.modified = True
     return render(request, 'bookstore/search_results.html', {'books': request.session['isbn_list_of_dicts']})
 
-def search_filter_author(request, key):
-    print (request.session)
-    print (request.session['isbn_list_of_dicts'])
+def search_filter_author(request):
     return render(request, 'bookstore/search_filter_author.html', {'books': request.session['isbn_list_of_dicts']})
+
+def search_filter_year(request):
+    return render(request, 'bookstore/search_filter_year.html', {'books': request.session['isbn_list_of_dicts']})
+
+def search_specific(request, key, specified):
+    search_values = [specified]
+    isbn_list_of_dicts = query(search_values)
+
+    print (isbn_list_of_dicts)
+    request.session['isbn_list_of_dicts'] = isbn_list_of_dicts
+    request.session.modified = True
+    return render(request, 'bookstore/search_filter_year.html', {'books': request.session['isbn_list_of_dicts']})
+
+def query(search_values):
+    # Get isbn hit count from book table
+    isbn_list_of_dicts = []
+    temp_dict = {}
+    for i in search_values:
+        temp = []
+        search_title = Book.objects.filter(title__icontains=i)
+        search_author = Book.objects.filter(author__icontains=i)
+        search_publisher = Book.objects.filter(publisher__icontains=i)
+        search_subject = Book.objects.filter(book_subject__icontains=i)
+
+        temp.extend(search_title.values_list('isbn10', flat=True))
+        temp.extend(search_author.values_list('isbn10', flat=True))
+        temp.extend(search_publisher.values_list('isbn10', flat=True))
+        temp.extend(search_subject.values_list('isbn10', flat=True))
+
+        for j in temp:
+            if j in temp_dict:
+                temp_dict[j][0] += 1
+            else:
+                temp_dict[j] = [1]
+    print (temp_dict)
+
+    for i in temp_dict:
+        uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s"%(str(i))
+        try:
+            f = urllib.request.urlopen(uri)
+            data = f.read()
+            f.close()
+
+            data = xmltodict.parse(data)
+            print (data['GoodreadsResponse']['book']['image_url'])
+            book_img = data['GoodreadsResponse']['book']['image_url']
+        except:
+            print ('excepted yo')
+            book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
+        finally:
+            temp_dict[i].append(book_img)
+
+    for i in temp_dict:
+        temp_dict[i].append(get_object_or_404(Book, isbn10=i))
+    for i in temp_dict:
+        append_this_dict = {'isbn10': i, 'data': {  'hits': temp_dict[i][0],
+                                                    'url': temp_dict[i][1],
+                                                    'title': temp_dict[i][2].title,
+                                                    'publisher': temp_dict[i][2].publisher,
+                                                    'year': temp_dict[i][2].years,
+                                                    'author': temp_dict[i][2].author}}
+        isbn_list_of_dicts.append(append_this_dict)
+    return isbn_list_of_dicts
 
 def book_details(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
@@ -121,7 +140,7 @@ def book_details(request, bid):
         print ('excepted yo')
         book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
 
-    
+
     return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': rounded_score, 'uscore':uscore, 'reviews':reviews})
 
 @login_required
@@ -129,7 +148,7 @@ def review(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
     #TODO: Check if user is currently logged in, if not redirect to login page
 
-    #get username uname = '' 
+    #get username uname = ''
     username = request.user.username
     user = User.objects.get(username=username)
     full_name = request.user.first_name + ' ' + request.user.last_name
