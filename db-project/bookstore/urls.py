@@ -16,6 +16,10 @@ urlpatterns = [
     url(r'^book/(?P<bid>[a-zA-Z0-9]+)$', views.book_details, name = 'book_details'),
  	url(r'^book/(?P<bid>[a-zA-Z0-9]+)/add-to-cart$', views.add_to_cart, name = 'add_to_cart'),
  	url(r'^book/(?P<bid>[a-zA-Z0-9]+)/review', views.review, name = 'review'),
-    url(r'^search/(?P<key>.*)$', views.search, name='search'),
-    url(r'^search/(?P<key>.*)/filter-author$', views.search_filter_author, name='search_filter_author'),
+    url(r'^search/$', views.search, name='search'),
+    url(r'^search/filter-author$', views.search_filter_author, name='search_filter_author'),
+    url(r'^search/filter-year$', views.search_filter_year, name='search_filter_year'),
+    url(r'^keyword/(?P<key>[a-zA-Z0-9]+)/(?P<specified>.*)$', views.search_specific, name='search_specific'),
+
+
 ]
