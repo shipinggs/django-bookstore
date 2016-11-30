@@ -27,7 +27,7 @@
 <div class="rig">
   <ul id="rig">
       <li>
-          <a class="rig-cell" href="#">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'arts' %}">
               <img class="rig-img" src="{% static "img/img-arts.jpg"  %}">
               <span class="rig-overlay"></span>
               <span class="rig-text">Arts</span>
@@ -41,7 +41,7 @@
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'business' %}">
             <img class="rig-img" src="{% static "img/img-business.jpg"  %}">
               <span class="rig-overlay"></span>
               <span class="rig-text">Business</span>
@@ -97,14 +97,14 @@
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'science' %}">
             <img class="rig-img" src="{% static "img/img-science.jpg"  %}">
               <span class="rig-overlay"></span>
               <span class="rig-text">Science</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'society' %}">
             <img class="rig-img" src="{% static "img/img-society.jpg"  %}">
               <span class="rig-overlay"></span>
               <span class="rig-text">Society</span>
