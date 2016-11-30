@@ -15,24 +15,22 @@
   <div class="sort-by">
     <p>Sort by:</p>
     <a href="{% url 'bookstore:search_filter_author' %}">Author | </a>
-    <a href="{% url 'bookstore:search_filter_year' %}">Year</a>
+    <a>Year</a>
   </div>
   <div class="row">
     <div class="col-sm-12">
-      {% for book in books|dictsortreversed:"data.hits"%}
-      <div class="perrow">
+      {% for book in books|dictsortreversed:"data.year"%}
             <div id="column1">
                 <img src={{book.data.url}}>
             <!-- dict sort django -->
             </div>
           <div id="column2">
-              Title: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.title }}</a><br>
-              Author: <a href="{% url 'bookstore:search_specific' 'author' book.data.author %}">{{ book.data.author }}</a><br>
-              Publisher: <a href="{% url 'bookstore:search_specific' 'publisher' book.data.publisher %}">{{ book.data.publisher }}</a><br>
-              Year: {{ book.data.year }}
+            Title: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.title }}</a><br>
+            Author: <a href="{% url 'bookstore:search_specific' 'author' book.data.author %}">{{ book.data.author }}</a><br>
+            Publisher: <a href="{% url 'bookstore:search_specific' 'publisher' book.data.publisher %}">{{ book.data.publisher }}</a><br>
+            Year: {{ book.data.year }}
         </div>
         <div class="clear"></div>
-      </div>
       {% endfor %}
     </div>
   </div>
