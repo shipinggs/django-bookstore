@@ -1,23 +1,18 @@
-nav {
-    float: left;
-    max-width: 160px;
-    margin: 0;
-    padding: 1em;
+#column1 {
+  width: 200px;
+  float: left;
+  margin-top: 50px;
 }
-
-nav ul {
-    list-style-type: none;
-    padding: 0;
+#column2 {
+  margin-left: 200px;
+  margin-top: 50px;
+  font-size:18pt;
+  color:#23238e;
 }
-
-nav ul a {
-    text-decoration: none;
+img {
+  width:187px;
+  height:250px;
 }
-
-article {
-    float: left
-    margin-left: 170px;
-    border-left: 1px solid gray;
-    padding: 1em;
-    overflow: hidden;
+.clear {
+  clear: both;
 }
