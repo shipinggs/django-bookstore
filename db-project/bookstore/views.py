@@ -38,17 +38,18 @@ def search(request):
         # check whether it's valid:
         if form.is_valid():
             temp_dict = {}
-            print (form.cleaned_data)
             search_values = form.cleaned_data['search_value'].split(" ")
             search_values = list(filter(None, search_values))
             print (search_values)
 
-            isbn_list_of_dicts = query(search_values)
 
+            isbn_list_of_dicts = query(search_values, 'all')
+    if len(isbn_list_of_dicts) == 0:
+        return render(request, 'bookstore/search_results.html', {'books': request.session['isbn_list_of_dicts'], 'status': 'No results could be found :('})
     print (isbn_list_of_dicts)
     request.session['isbn_list_of_dicts'] = isbn_list_of_dicts
     request.session.modified = True
-    return render(request, 'bookstore/search_results.html', {'books': request.session['isbn_list_of_dicts']})
+    return render(request, 'bookstore/search_results.html', {'books': request.session['isbn_list_of_dicts'] , 'status': 'Search results for "%s"'%(' '.join(search_values))})
 
 def search_filter_author(request):
     return render(request, 'bookstore/search_filter_author.html', {'books': request.session['isbn_list_of_dicts']})
@@ -58,28 +59,41 @@ def search_filter_year(request):
 
 def search_specific(request, key, specified):
     search_values = [specified]
-    isbn_list_of_dicts = query(search_values)
+    isbn_list_of_dicts = query(search_values, key)
 
     print (isbn_list_of_dicts)
     request.session['isbn_list_of_dicts'] = isbn_list_of_dicts
     request.session.modified = True
-    return render(request, 'bookstore/search_filter_year.html', {'books': request.session['isbn_list_of_dicts']})
+    return render(request, 'bookstore/search_results.html', {'books': request.session['isbn_list_of_dicts'], 'status': 'Search results for "%s" under %s'%(' '.join(search_values), key)})
 
-def query(search_values):
+def query(search_values, query_type):
     # Get isbn hit count from book table
     isbn_list_of_dicts = []
     temp_dict = {}
     for i in search_values:
         temp = []
-        search_title = Book.objects.filter(title__icontains=i)
-        search_author = Book.objects.filter(author__icontains=i)
-        search_publisher = Book.objects.filter(publisher__icontains=i)
-        search_subject = Book.objects.filter(book_subject__icontains=i)
+        if query_type == 'all':
+            search_title = Book.objects.filter(title__icontains=i)
+            search_author = Book.objects.filter(author__icontains=i)
+            search_publisher = Book.objects.filter(publisher__icontains=i)
+            search_subject = Book.objects.filter(book_subject__icontains=i)
 
-        temp.extend(search_title.values_list('isbn10', flat=True))
-        temp.extend(search_author.values_list('isbn10', flat=True))
-        temp.extend(search_publisher.values_list('isbn10', flat=True))
-        temp.extend(search_subject.values_list('isbn10', flat=True))
+            temp.extend(search_title.values_list('isbn10', flat=True))
+            temp.extend(search_author.values_list('isbn10', flat=True))
+            temp.extend(search_publisher.values_list('isbn10', flat=True))
+            temp.extend(search_subject.values_list('isbn10', flat=True))
+
+        elif query_type == 'author':
+            search_author = Book.objects.filter(author__icontains=i)
+            temp.extend(search_author.values_list('isbn10', flat=True))
+
+        elif query_type == 'publisher':
+            search_publisher = Book.objects.filter(publisher__icontains=i)
+            temp.extend(search_publisher.values_list('isbn10', flat=True))
+
+        elif query_type == 'category':
+            search_category = Book.objects.filter(book_subject__icontains=i)
+            temp.extend(search_category.values_list('isbn10', flat=True))
 
         for j in temp:
             if j in temp_dict:
