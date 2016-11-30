@@ -1,8 +1,9 @@
 {% extends 'bookstore/base.html' %}
 {% block title %}Search Results{% endblock %}
 {% load staticfiles %}
+{% block stylesheet %}
 <link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/search-results.css'  %}">
-
+{% endblock %}
 {% block body %}
 
 <div class="container">
@@ -13,26 +14,23 @@
   </div>
   <div class="sort-by">
     <p>Sort by:</p>
-    <p>Author | </p>
-    <a href="#">Year</a>
+    <a>Author | </a>
+    <a href="{% url 'bookstore:search_filter_year' %}">Year</a>
   </div>
   <div class="row">
     <div class="col-sm-12">
       {% for book in books|dictsort:"data.author"%}
-            <div>
-              <nav>
+            <div id="column1">
                 <img src={{book.data.url}}>
-              </nav>
             <!-- dict sort django -->
-            <article>
-              <ul>
-                <li>Title: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.title }}</a></li>
-                <li>Author: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.author }}</a></li>
-                <li>Publisher: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.publisher }}</a></li>
-                <li>Year: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.year }}</a></li>
-            </ul>
-            </article>
-          </div>
+            </div>
+          <div id="column2">
+            Title: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.title }}</a><br>
+            Author: <a href="{% url 'bookstore:search_specific' 'author' book.data.author %}">{{ book.data.author }}</a><br>
+            Publisher: <a href="{% url 'bookstore:search_specific' 'publisher' book.data.publisher %}">{{ book.data.publisher }}</a><br>
+            Year: {{ book.data.year }}
+        </div>
+        <div class="clear"></div>
       {% endfor %}
     </div>
   </div>
