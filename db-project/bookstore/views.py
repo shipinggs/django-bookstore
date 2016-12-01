@@ -22,7 +22,14 @@ isbn_list_of_dicts = []
 
 def home(request):
     #TODO: add functionality
-    return render(request, 'bookstore/index.html')
+    if request.user.is_authenticated():
+        recommended = query(request.user.id, 'recommend')
+        request.session['recommended'] = recommended
+        request.session.modified = True
+    # test =  query(request.user.id, 'recommend')
+        return render(request, 'bookstore/index.html', {'books': request.session['recommended']})
+    else:
+        return render(request, 'bookstore/index.html', {'books': ''})
 
 
 def search(request):
@@ -70,36 +77,67 @@ def query(search_values, query_type):
     # Get isbn hit count from book table
     isbn_list_of_dicts = []
     temp_dict = {}
-    for i in search_values:
+
+    if query_type == 'recommend':
         temp = []
-        if query_type == 'all':
-            search_title = Book.objects.filter(title__icontains=i)
-            search_author = Book.objects.filter(author__icontains=i)
-            search_publisher = Book.objects.filter(publisher__icontains=i)
-            search_subject = Book.objects.filter(book_subject__icontains=i)
+        # get all orders of the current user
+        search_user_books = CustomerOrder.objects.filter(login_name=search_values)
+        # get all the isbn13 of these orders
+        current_user_books = []
+        current_user_books.extend(search_user_books.values_list('isbn13', flat=True))
+        print (current_user_books)
+        other_users = []
+        for i in current_user_books:
+            temp_users = CustomerOrder.objects.filter(isbn13=i)
+            other_users.extend(temp_users.values_list('login_name', flat=True))
 
-            temp.extend(search_title.values_list('isbn10', flat=True))
-            temp.extend(search_author.values_list('isbn10', flat=True))
-            temp.extend(search_publisher.values_list('isbn10', flat=True))
-            temp.extend(search_subject.values_list('isbn10', flat=True))
+        print (other_users)
+        other_users = list(set(other_users))
+        if search_values in other_users:
+            other_users.remove(search_values)
+        temp_isbn13 = []
+        print (other_users)
+        for i in other_users:
+            temp_other_user_books = CustomerOrder.objects.filter(login_name=i)
+            temp_isbn13.extend(temp_other_user_books.values_list('isbn13', flat=True))
 
-        elif query_type == 'author':
-            search_author = Book.objects.filter(author__icontains=i)
-            temp.extend(search_author.values_list('isbn10', flat=True))
+        for i in temp_isbn13:
+            if i not in current_user_books:
+                book = Book.objects.get(isbn13=i)
+                temp.append(book.isbn10)
 
-        elif query_type == 'publisher':
-            search_publisher = Book.objects.filter(publisher__icontains=i)
-            temp.extend(search_publisher.values_list('isbn10', flat=True))
+    else:
+        for i in search_values:
+            temp = []
+            if query_type == 'all':
+                search_title = Book.objects.filter(title__icontains=i)
+                search_author = Book.objects.filter(author__icontains=i)
+                search_publisher = Book.objects.filter(publisher__icontains=i)
+                search_subject = Book.objects.filter(book_subject__icontains=i)
 
-        elif query_type == 'category':
-            search_category = Book.objects.filter(book_subject__icontains=i)
-            temp.extend(search_category.values_list('isbn10', flat=True))
+                temp.extend(search_title.values_list('isbn10', flat=True))
+                temp.extend(search_author.values_list('isbn10', flat=True))
+                temp.extend(search_publisher.values_list('isbn10', flat=True))
+                temp.extend(search_subject.values_list('isbn10', flat=True))
 
-        for j in temp:
-            if j in temp_dict:
-                temp_dict[j][0] += 1
-            else:
-                temp_dict[j] = [1]
+            elif query_type == 'author':
+                search_author = Book.objects.filter(author__icontains=i)
+                temp.extend(search_author.values_list('isbn10', flat=True))
+
+            elif query_type == 'publisher':
+                search_publisher = Book.objects.filter(publisher__icontains=i)
+                temp.extend(search_publisher.values_list('isbn10', flat=True))
+
+            elif query_type == 'category':
+                search_category = Book.objects.filter(book_subject__icontains=i)
+                temp.extend(search_category.values_list('isbn10', flat=True))
+
+    for j in temp:
+        if j in temp_dict:
+            temp_dict[j][0] += 1
+        else:
+            temp_dict[j] = [1]
+
     print (temp_dict)
 
     for i in temp_dict:
