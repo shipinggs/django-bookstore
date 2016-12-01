@@ -64,6 +64,9 @@ def search_filter_author(request):
 def search_filter_year(request):
     return render(request, 'bookstore/search_filter_year.html', {'books': request.session['isbn_list_of_dicts']})
 
+def search_filter_score(request):
+    return render(request, 'bookstore/search_filter_score.html', {'books': request.session['isbn_list_of_dicts']})
+
 def search_specific(request, key, specified):
     search_values = [specified]
     isbn_list_of_dicts = query(search_values, key)
@@ -159,12 +162,21 @@ def query(search_values, query_type):
     for i in temp_dict:
         temp_dict[i].append(get_object_or_404(Book, isbn10=i))
     for i in temp_dict:
-        append_this_dict = {'isbn10': i, 'data': {  'hits': temp_dict[i][0],
+        book = Book.objects.get(isbn10=i)
+        search_reviews = Review.objects.filter(isbn13=book.isbn13)
+        temp_list = search_reviews.values_list('review_score', flat=True)
+
+        if len(temp_list)!=0:
+            average_score = sum(temp_list)*1.0/len(temp_list)
+        else:
+            average_score = 0
+        append_this_dict = {'isbn10': i, 'isbn13': book.isbn13,'data': {  'hits': temp_dict[i][0],
                                                     'url': temp_dict[i][1],
                                                     'title': temp_dict[i][2].title,
                                                     'publisher': temp_dict[i][2].publisher,
                                                     'year': temp_dict[i][2].years,
-                                                    'author': temp_dict[i][2].author}}
+                                                    'author': temp_dict[i][2].author,
+                                                    'average_score': average_score}}
         isbn_list_of_dicts.append(append_this_dict)
     return isbn_list_of_dicts
 
