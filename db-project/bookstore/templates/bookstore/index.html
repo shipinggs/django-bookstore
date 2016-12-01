@@ -5,6 +5,7 @@
 {% block stylesheet %}
 <link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/index.css'  %}">
 <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+<link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/search-results.css'  %}">
 {% endblock %}
 
 {% block body %}
@@ -112,4 +113,32 @@
       </li>
   </ul>
 </div>
+
+{% if not user.is_anonymous %}
+<div class="container">
+    <div class="row">
+        <h1>Recommendations</h1>
+        <h5>Other readers who bought the same books as you, also bought:</h5>
+    </div>
+  <div class="row">
+    <div class="col-sm-12">
+      {% for book in books|dictsortreversed:"data.hits"%}
+      <div class="perrow">
+            <div id="column1">
+                <img src={{book.data.url}} class="recommend-img">
+            <!-- dict sort django -->
+            </div>
+          <div id="column2">
+              Title: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.title }}</a><br>
+              Author: <a href="{% url 'bookstore:search_specific' 'author' book.data.author %}">{{ book.data.author }}</a><br>
+              Publisher: <a href="{% url 'bookstore:search_specific' 'publisher' book.data.publisher %}">{{ book.data.publisher }}</a><br>
+              Year: {{ book.data.year }}
+        </div>
+        <div class="clear"></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
