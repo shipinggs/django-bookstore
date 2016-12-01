@@ -19,5 +19,6 @@ urlpatterns = [
     url(r'^search/$', views.search, name='search'),
     url(r'^search/filter-author$', views.search_filter_author, name='search_filter_author'),
     url(r'^search/filter-year$', views.search_filter_year, name='search_filter_year'),
+    url(r'^search/filter-score$', views.search_filter_score, name='search_filter_score'),
     url(r'^keyword/(?P<key>[a-zA-Z0-9]+)/(?P<specified>.*)$', views.search_specific, name='search_specific'),
 ]
