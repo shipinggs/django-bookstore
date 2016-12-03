@@ -26,15 +26,18 @@ def home(request):
         recommended = query(request.user.id, 'recommend')
         request.session['recommended'] = recommended
         request.session.modified = True
-    # test =  query(request.user.id, 'recommend')
-        return render(request, 'bookstore/index.html', {'books': request.session['recommended']})
+
+        # If there are no books bought yet or nothing to recommend
+        if len(recommended) == 0:
+            return render(request, 'bookstore/index.html', {'books': request.session['recommended'], 'test': False})
+
+        else:
+            return render(request, 'bookstore/index.html', {'books': request.session['recommended'], 'test': True})
     else:
-        return render(request, 'bookstore/index.html', {'books': ''})
+        return render(request, 'bookstore/index.html', {'books': '', 'test': False})
 
 
 def search(request):
-    #TODO: add response to search function
-    print ("here")
     """Book search based on authors, and/or publisher, and/or title, and/or subjec"""
     if request.method == 'GET':
         # create a form instance and populate it with data from the request:
@@ -45,33 +48,39 @@ def search(request):
         # check whether it's valid:
         if form.is_valid():
             temp_dict = {}
+
+            # Gets the search values, which is determined by what the user has typed into search bar
             search_values = form.cleaned_data['search_value'].split(" ")
             search_values = list(filter(None, search_values))
-            print (search_values)
 
-
+            # calls the query function to get list of dictionaries of book data
             isbn_list_of_dicts = query(search_values, 'all')
+
+    # No such results could be found
     if len(isbn_list_of_dicts) == 0:
         return render(request, 'bookstore/search_results.html', {'books': request.session['isbn_list_of_dicts'], 'status': 'No results could be found :('})
-    print (isbn_list_of_dicts)
+
     request.session['isbn_list_of_dicts'] = isbn_list_of_dicts
     request.session.modified = True
     return render(request, 'bookstore/search_results.html', {'books': request.session['isbn_list_of_dicts'] , 'status': 'Search results for "%s"'%(' '.join(search_values))})
 
+# Filters the search results by author
 def search_filter_author(request):
     return render(request, 'bookstore/search_filter_author.html', {'books': request.session['isbn_list_of_dicts']})
 
+# Filters the search results by year
 def search_filter_year(request):
     return render(request, 'bookstore/search_filter_year.html', {'books': request.session['isbn_list_of_dicts']})
 
+# Filters the search results by review_score
 def search_filter_score(request):
     return render(request, 'bookstore/search_filter_score.html', {'books': request.session['isbn_list_of_dicts']})
 
+# Returns a search result based on click event: Either by a certain publisher, author or category
 def search_specific(request, key, specified):
+    # Gets the search values, which is determined by the click event and returns a list of dictionaries
     search_values = [specified]
     isbn_list_of_dicts = query(search_values, key)
-
-    print (isbn_list_of_dicts)
     request.session['isbn_list_of_dicts'] = isbn_list_of_dicts
     request.session.modified = True
     return render(request, 'bookstore/search_results.html', {'books': request.session['isbn_list_of_dicts'], 'status': 'Search results for "%s" under %s'%(' '.join(search_values), key)})
@@ -81,6 +90,7 @@ def query(search_values, query_type):
     isbn_list_of_dicts = []
     temp_dict = {}
 
+    # Case when the recommender system is deployed
     if query_type == 'recommend':
         temp = []
         # get all orders of the current user
@@ -88,22 +98,25 @@ def query(search_values, query_type):
         # get all the isbn13 of these orders
         current_user_books = []
         current_user_books.extend(search_user_books.values_list('isbn13', flat=True))
-        print (current_user_books)
         other_users = []
+
+        # Gets the user id of the users who have ordered books that the user has ordered before
         for i in current_user_books:
             temp_users = CustomerOrder.objects.filter(isbn13=i)
             other_users.extend(temp_users.values_list('login_name', flat=True))
 
-        print (other_users)
+        # Removes the user's user id so that it will purely recommend new books
         other_users = list(set(other_users))
         if search_values in other_users:
             other_users.remove(search_values)
+
+        # Gets the list of isbn13 that other users with similar taste have ordered
         temp_isbn13 = []
-        print (other_users)
         for i in other_users:
             temp_other_user_books = CustomerOrder.objects.filter(login_name=i)
             temp_isbn13.extend(temp_other_user_books.values_list('isbn13', flat=True))
 
+        # Gets the isbn10 of the books and removes the books that the user has ordered before
         for i in temp_isbn13:
             if i not in current_user_books:
                 book = Book.objects.get(isbn13=i)
@@ -112,7 +125,10 @@ def query(search_values, query_type):
     else:
         for i in search_values:
             temp = []
+
+            # Case when the user types into the search bar and searches
             if query_type == 'all':
+                # Gets the list of books' isbn10 that contain keywords from search bar
                 search_title = Book.objects.filter(title__icontains=i)
                 search_author = Book.objects.filter(author__icontains=i)
                 search_publisher = Book.objects.filter(publisher__icontains=i)
@@ -123,26 +139,31 @@ def query(search_values, query_type):
                 temp.extend(search_publisher.values_list('isbn10', flat=True))
                 temp.extend(search_subject.values_list('isbn10', flat=True))
 
+            # Case when the user clicks an author
             elif query_type == 'author':
+                # Gets the list of books' isbn10 written by a certain author
                 search_author = Book.objects.filter(author__icontains=i)
                 temp.extend(search_author.values_list('isbn10', flat=True))
 
+            # Case when the user clicks a publisher
             elif query_type == 'publisher':
+                # Gets the list of books' isbn10 published by a certain publisher
                 search_publisher = Book.objects.filter(publisher__icontains=i)
                 temp.extend(search_publisher.values_list('isbn10', flat=True))
 
+            # Case when the user clicks a category
             elif query_type == 'category':
+                # Gets the list of books' isbn10 from a certain category
                 search_category = Book.objects.filter(book_subject__icontains=i)
                 temp.extend(search_category.values_list('isbn10', flat=True))
 
+    # Iterates through the list of books' isbn10 and counts the number of times the isbn10 appears in list
     for j in temp:
         if j in temp_dict:
             temp_dict[j][0] += 1
         else:
             temp_dict[j] = [1]
-
-    print (temp_dict)
-
+    # Gets the book images to be used in the html page, appends it to temp_dict
     for i in temp_dict:
         uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s"%(str(i))
         try:
@@ -151,25 +172,32 @@ def query(search_values, query_type):
             f.close()
 
             data = xmltodict.parse(data)
-            print (data['GoodreadsResponse']['book']['image_url'])
+            # print (data['GoodreadsResponse']['book']['image_url'])
             book_img = data['GoodreadsResponse']['book']['image_url']
         except:
-            print ('excepted yo')
+            # print ('excepted yo')
             book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
         finally:
             temp_dict[i].append(book_img)
 
+    # Gets the book object from the isbn10
     for i in temp_dict:
         temp_dict[i].append(get_object_or_404(Book, isbn10=i))
+
+    # Gets the required details from the books and puts them into a dictionary for reference in html page
     for i in temp_dict:
+        # Gets the reviews of a certain book
         book = Book.objects.get(isbn10=i)
         search_reviews = Review.objects.filter(isbn13=book.isbn13)
-        temp_list = search_reviews.values_list('review_score', flat=True)
 
+        # Averages the review score over the number of reviews
+        temp_list = search_reviews.values_list('review_score', flat=True)
         if len(temp_list)!=0:
             average_score = sum(temp_list)*1.0/len(temp_list)
         else:
             average_score = 0
+
+        # This dictionary will be appended to a list which will then be used in the html page
         append_this_dict = {'isbn10': i, 'isbn13': book.isbn13,'data': {  'hits': temp_dict[i][0],
                                                     'url': temp_dict[i][1],
                                                     'title': temp_dict[i][2].title,
