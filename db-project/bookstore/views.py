@@ -29,12 +29,12 @@ def home(request):
 
         # If there are no books bought yet or nothing to recommend
         if len(recommended) == 0:
-            return render(request, 'bookstore/index.html', {'books': request.session['recommended'], 'test': False})
+            return render(request, 'bookstore/index.html', {'books': request.session['recommended'], 'flag': False})
 
         else:
-            return render(request, 'bookstore/index.html', {'books': request.session['recommended'], 'test': True})
+            return render(request, 'bookstore/index.html', {'books': request.session['recommended'], 'flag': True})
     else:
-        return render(request, 'bookstore/index.html', {'books': '', 'test': False})
+        return render(request, 'bookstore/index.html', {'books': '', 'flag': False})
 
 
 def search(request):
