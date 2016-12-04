@@ -144,7 +144,8 @@
 	        <input id="rating1" type="radio" name="rating" value="1" disabled {% if avg_score == 1 %}checked{%endif%}>
 	        <label for="rating1">1</label>
 		    </span>
-		    <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{avg_score}}/10 stars</h6>
+		    <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i><strong>{{avg_score}}/10 stars</strong></h6>
+        |&nbsp;{{no_reviews}} user(s) have rated this book so far
         {% if avg_score == 0 %}<p class="w3-text-red"><strong>No users have reviewed this book. Be the first!</strong></p>
           {% endif %}
 
@@ -257,7 +258,7 @@
               <p class="w3-text-black">{{review.review_text}}</p>
                 {% for i in review_ratings %}
                   {% if i.rated == review.id %}
-                    Usefulness Rating: {{i.rating__sum}}
+                    Average Usefulness: {{i.rating__avg}}
                   {% endif %}
                 {% endfor %}
               <form action="{% url 'bookstore:rate_user_review' book.isbn10 review.id %}" method="post">

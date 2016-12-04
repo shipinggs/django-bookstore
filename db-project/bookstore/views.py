@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book, Review, ShoppingCart, CustomerOrder,Rate
-from django.db.models import Q, Sum, Count
+from django.db.models import Q, Sum, Count, Avg
 import urllib
 import xmltodict
 import datetime
@@ -223,11 +223,11 @@ def book_details(request, bid, sort_newest=False):
     user = User.objects.get(username=username)
 
     #get total rating for each review
-    r = Rate.objects.filter(isbn13=book).values('rated').annotate(Sum('rating'))
+    r = Rate.objects.filter(isbn13=book).values('rated').annotate(Avg('rating'))
     
     #get list of reviews for book
     reviews= Review.objects.filter(isbn13=book).order_by('review_date').reverse()
-        
+    no_reviews = len(reviews)
     #Get score of book
     avg_score = 0
     uscore = 5
@@ -259,14 +259,14 @@ def book_details(request, bid, sort_newest=False):
                             'review_score': review.review_score,
                             'review_text': review.review_text,
                             'review_date': review.review_date,
-                            'total_rating': rate['rating__sum'],
+                            'total_rating': rate['rating__avg'],
                     }
                     review_list_best.append(item)
         #reviews = sorted(review_list_best, key=lambda k: k['total_rating'])
         reviews = sorted(review_list_best, key=itemgetter('total_rating'), reverse=True)
 
 
-    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': rounded_score, 'uscore':uscore, 'reviews':reviews, 'review_ratings':r})
+    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': rounded_score, 'uscore':uscore, 'reviews':reviews, 'review_ratings':r, "no_reviews":no_reviews})
 
 def review_filter_newest(request, bid):
     rend = book_details(request, bid, sort_newest=True)
@@ -293,13 +293,14 @@ def review(request, bid):
         uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
         uscore = 5
         reviews = Review.objects.filter(isbn13=book.isbn13)
-        r = Rate.objects.filter(isbn13=book).values('rated').annotate(Sum('rating'))
+        r = Rate.objects.filter(isbn13=book).values('rated').annotate(Avg('rating'))
+        no_reviews = len(reviews)
         avg_score = 0
         if reviews:
             for review in reviews:
                 avg_score += review.review_score
             avg_score = avg_score/len(reviews)
-            rounded_score = round(avg_score)
+        rounded_score = round(avg_score)
         try:
             f = urllib.request.urlopen(uri)
             data = f.read()
@@ -311,7 +312,7 @@ def review(request, bid):
             print ('excepted yo')
             book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
 
-        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':rounded_score, 'uscore':uscore, 'error_message':"Please enter a valid review!", 'reviews':reviews, 'review_ratings': r})
+        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':rounded_score, 'uscore':uscore, 'error_message':"Please enter a valid review!", 'reviews':reviews, 'review_ratings': r, 'no_reviews': no_reviews})
 
     #if user has valid review, insert into Review table
     try:
