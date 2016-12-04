@@ -5,6 +5,7 @@
 {% block stylesheet %}
 <link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/index.css'  %}">
 <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+<link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/search-results.css'  %}">
 {% endblock %}
 
 {% block body %}
@@ -27,89 +28,117 @@
 <div class="rig">
   <ul id="rig">
       <li>
-          <a class="rig-cell" href="#">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'arts' %}">
               <img class="rig-img" src="{% static "img/img-arts.jpg"  %}">
               <span class="rig-overlay"></span>
               <span class="rig-text">Arts</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-            <img class="rig-img" src="{% static "img/image-2.jpg"  %}">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'accounting' %}">
+            <img class="rig-img" src="{% static "img/img-accounting.jpg"  %}">
               <span class="rig-overlay"></span>
               <span class="rig-text">Accounting</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'business' %}">
             <img class="rig-img" src="{% static "img/img-business.jpg"  %}">
               <span class="rig-overlay"></span>
               <span class="rig-text">Business</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-            <img class="rig-img" src="{% static "img/image-4.jpg"  %}">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'essay' %}">
+            <img class="rig-img" src="{% static "img/img-essay.jpg"  %}">
               <span class="rig-overlay"></span>
-              <span class="rig-text">Curabitur tempus</span>
+              <span class="rig-text">Essay</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-            <img class="rig-img" src="{% static "img/image-5.jpg"  %}">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'journal' %}">
+            <img class="rig-img" src="{% static "img/img-journal.jpg"  %}">
               <span class="rig-overlay"></span>
-              <span class="rig-text">Sed et nunc luctus</span>
+              <span class="rig-text">Journalism</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-            <img class="rig-img" src="{% static "img/image-6.jpg"  %}">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'memoir' %}">
+            <img class="rig-img" src="{% static "img/img-memoir.jpg"  %}">
               <span class="rig-overlay"></span>
-              <span class="rig-text">Suspendisse tellus</span>
+              <span class="rig-text">Memoir</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-              <img class="rig-img" src="{% static "img/image-1.jpg"  %}">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'nonfiction' %}">
+              <img class="rig-img" src="{% static "img/img-nonfiction.jpg"  %}">
               <span class="rig-overlay"></span>
-              <span class="rig-text">Lorem Ipsum Dolor</span>
+              <span class="rig-text">Nonfiction</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-            <img class="rig-img" src="{% static "img/image-2.jpg"  %}">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'reference' %}">
+            <img class="rig-img" src="{% static "img/img-reference.jpg"  %}">
               <span class="rig-overlay"></span>
-              <span class="rig-text">Consectetur Adipiscing</span>
+              <span class="rig-text">Reference Books</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-            <img class="rig-img" src="{% static "img/image-3.jpg"  %}">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'help' %}">
+            <img class="rig-img" src="{% static "img/img-help.jpg"  %}">
               <span class="rig-overlay"></span>
-              <span class="rig-text">Vivamus ut Felis</span>
+              <span class="rig-text">Self-help</span>
           </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-            <img class="rig-img" src="{% static "img/image-4.jpg"  %}">
-              <span class="rig-overlay"></span>
-              <span class="rig-text">Curabitur tempus</span>
-          </a>
+        <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'science' %}">
+          <img class="rig-img" src="{% static "img/img-science.jpg"  %}">
+          <span class="rig-overlay"></span>
+          <span class="rig-text">Science</span>
+        </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-            <img class="rig-img" src="{% static "img/img-science.jpg"  %}">
-              <span class="rig-overlay"></span>
-              <span class="rig-text">Science</span>
-          </a>
+        <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'society' %}">
+          <img class="rig-img" src="{% static "img/img-society.jpg"  %}">
+          <span class="rig-overlay"></span>
+          <span class="rig-text">Society</span>
+        </a>
       </li>
       <li>
-          <a class="rig-cell" href="#">
-            <img class="rig-img" src="{% static "img/img-society.jpg"  %}">
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'textbook' %}">
+            <img class="rig-img" src="{% static "img/img-textbook.jpg"  %}">
               <span class="rig-overlay"></span>
-              <span class="rig-text">Society</span>
+              <span class="rig-text">Textbook</span>
           </a>
       </li>
   </ul>
 </div>
+
+{% if not user.is_anonymous and flag == True%}
+<div class="container">
+    <div class="row">
+        <h1>Recommendations</h1>
+        <h5>Other readers who bought the same books as you, also bought:</h5>
+    </div>
+  <div class="row">
+    <div class="col-sm-12">
+      {% for book in books|dictsortreversed:"data.hits"%}
+      <div class="perrow">
+            <div id="column1">
+                <img src={{book.data.url}} class="recommend-img">
+            <!-- dict sort django -->
+            </div>
+          <div id="column2">
+              Title: <a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.data.title }}</a><br>
+              Author: <a href="{% url 'bookstore:search_specific' 'author' book.data.author %}">{{ book.data.author }}</a><br>
+              Publisher: <a href="{% url 'bookstore:search_specific' 'publisher' book.data.publisher %}">{{ book.data.publisher }}</a><br>
+              Year: {{ book.data.year }}
+        </div>
+        <div class="clear"></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}

@@ -14,13 +14,13 @@
   </div>
   <div class="sort-by">
     <p>Sort by:</p>
-    <a>Author | </a>
-    <a href="{% url 'bookstore:search_filter_score' %}">User Rating | </a>
+    <a href="{% url 'bookstore:search_filter_author' %}">Author | </a>
+    <a>User Rating | </a>
     <a href="{% url 'bookstore:search_filter_year' %}">Year | </a>
   </div>
   <div class="row">
     <div class="col-sm-12">
-      {% for book in books|dictsort:"data.author"%}
+      {% for book in books|dictsortreversed:"data.average_score"%}
             <div id="column1">
                 <img src={{book.data.url}}>
             <!-- dict sort django -->

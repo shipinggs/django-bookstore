@@ -1,12 +1,10 @@
 #column1 {
   width: 200px;
   float: left;
-  margin-top: 5px;
 }
 #column2 {
   margin-left: 200px;
-  margin-top: 5px;
-  font-size:18pt;
+  font-size:16pt;
   color:#23238e;
 }
 img {

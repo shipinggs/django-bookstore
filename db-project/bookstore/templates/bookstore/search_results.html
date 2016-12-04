@@ -10,12 +10,14 @@
   <div class="row">
     <div class="col-sm-12">
       <h1>Search Results</h1>
+      <p>{{status}}</p>
     </div>
   </div>
   <div class="sort-by">
     <p>Sort by:</p>
     <a href="{% url 'bookstore:search_filter_author' %}">Author | </a>
-    <a href="{% url 'bookstore:search_filter_year' %}">Year</a>
+    <a href="{% url 'bookstore:search_filter_score' %}">User Rating | </a>
+    <a href="{% url 'bookstore:search_filter_year' %}">Year | </a>
   </div>
   <div class="row">
     <div class="col-sm-12">
