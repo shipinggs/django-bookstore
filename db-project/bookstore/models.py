@@ -39,7 +39,7 @@ class CustomerOrder(models.Model):
     class Meta:
         managed = True
         db_table = 'customer_order'
-        unique_together = (('login_name', 'isbn13'),)
+        
 
 
 class Rate(models.Model):

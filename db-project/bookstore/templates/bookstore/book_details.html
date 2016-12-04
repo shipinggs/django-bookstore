@@ -255,6 +255,7 @@
             <div class="w3-container">
               <h5 class="w3-opacity"><b>{{review.login_name.first_name}} {{review.login_name.last_name}} says</b></h5>
               <h6 class="w3-text-grey w3-small">On {{review.review_date}}</h6>
+              <p class="w3-text-grey"><strong>{{review.review_score}}/10 stars</strong></p>
               <p class="w3-text-black">{{review.review_text}}</p>
                 {% for i in review_ratings %}
                   {% if i.rated == review.id %}

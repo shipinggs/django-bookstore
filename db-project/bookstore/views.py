@@ -217,7 +217,7 @@ def query(search_values, query_type):
         isbn_list_of_dicts.append(append_this_dict)
     return isbn_list_of_dicts
 
-def book_details(request, bid, sort_newest=False):
+def book_details(request, bid, sort_newest=True):
     book = get_object_or_404(Book, isbn10=bid)
     username = request.user.username
     user = User.objects.get(username=username)
@@ -269,11 +269,11 @@ def book_details(request, bid, sort_newest=False):
     return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': rounded_score, 'uscore':uscore, 'reviews':reviews, 'review_ratings':r, "no_reviews":no_reviews})
 
 def review_filter_newest(request, bid):
-    rend = book_details(request, bid, sort_newest=True)
+    rend = book_details(request, bid)
     return rend
 
 def review_filter_best(request, bid):
-    rend = book_details(request, bid)
+    rend = book_details(request, bid, sort_newest=False)
     return rend
 
 @login_required
@@ -288,31 +288,31 @@ def review(request, bid):
     uscore = int(request.POST['ratinga'])
     #Check if review was submitted
     ureview = request.POST['ureview']
-    if ureview == '':
-        book = get_object_or_404(Book, isbn10=bid)
-        uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
-        uscore = 5
-        reviews = Review.objects.filter(isbn13=book.isbn13)
-        r = Rate.objects.filter(isbn13=book).values('rated').annotate(Avg('rating'))
-        no_reviews = len(reviews)
-        avg_score = 0
-        if reviews:
-            for review in reviews:
-                avg_score += review.review_score
-            avg_score = avg_score/len(reviews)
-        rounded_score = round(avg_score)
-        try:
-            f = urllib.request.urlopen(uri)
-            data = f.read()
-            f.close()
-            data = xmltodict.parse(data)
-            #print (data['GoodreadsResponse']['book']['image_url'])
-            book_img = data['GoodreadsResponse']['book']['image_url']
-        except:
-            print ('excepted yo')
-            book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
+    # if ureview == '':
+    #     book = get_object_or_404(Book, isbn10=bid)
+    #     uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
+    #     uscore = 5
+    #     reviews = Review.objects.filter(isbn13=book.isbn13)
+    #     r = Rate.objects.filter(isbn13=book).values('rated').annotate(Avg('rating'))
+    #     no_reviews = len(reviews)
+    #     avg_score = 0
+    #     if reviews:
+    #         for review in reviews:
+    #             avg_score += review.review_score
+    #         avg_score = avg_score/len(reviews)
+    #     rounded_score = round(avg_score)
+    #     try:
+    #         f = urllib.request.urlopen(uri)
+    #         data = f.read()
+    #         f.close()
+    #         data = xmltodict.parse(data)
+    #         #print (data['GoodreadsResponse']['book']['image_url'])
+    #         book_img = data['GoodreadsResponse']['book']['image_url']
+    #     except:
+    #         print ('excepted yo')
+    #         book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
 
-        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':rounded_score, 'uscore':uscore, 'error_message':"Please enter a valid review!", 'reviews':reviews, 'review_ratings': r, 'no_reviews': no_reviews})
+    #     return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':rounded_score, 'uscore':uscore, 'error_message':"Please enter a valid review!", 'reviews':reviews, 'review_ratings': r, 'no_reviews': no_reviews})
 
     #if user has valid review, insert into Review table
     try:
