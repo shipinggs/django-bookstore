@@ -46,7 +46,7 @@ class Rate(models.Model):
     rater = models.ForeignKey(User, models.DO_NOTHING, db_column='rater', related_name='%(class)s_rater_requests_created')
     rated = models.ForeignKey('Review', models.DO_NOTHING, db_column='rated', related_name='%(class)s_rated_requests_created')
     rating = models.IntegerField()
-    isbn13 = models.ForeignKey('Review', models.DO_NOTHING, db_column='ISBN13', related_name='%(class)s_isbn13_requests_created')  # Field name made lowercase.
+    isbn13 = models.ForeignKey(Book, models.DO_NOTHING, db_column='ISBN13', related_name='%(class)s_isbn13_requests_created')  # Field name made lowercase.
 
     class Meta:
         managed = True

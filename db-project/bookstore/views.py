@@ -1,10 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Book, Review, ShoppingCart, CustomerOrder
-from django.db.models import Q
+from .models import Book, Review, ShoppingCart, CustomerOrder,Rate
+from django.db.models import Q, Sum, Count
 import urllib
 import xmltodict
 import datetime
+from operator import itemgetter
 
 from django.views import generic
 from django.views.generic import View
@@ -13,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.messages import get_messages
 
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -44,6 +46,7 @@ def search(request):
             print (form.cleaned_data)
             search_values = form.cleaned_data['search_value'].split(" ")
             search_values = list(filter(None, search_values))
+            print ("Search form")
             print (search_values)
 
             isbn_list_of_dicts = query(search_values)
@@ -119,11 +122,18 @@ def query(search_values):
         isbn_list_of_dicts.append(append_this_dict)
     return isbn_list_of_dicts
 
-def book_details(request, bid):
+def book_details(request, bid, sort_newest=False):
     book = get_object_or_404(Book, isbn10=bid)
-    reviews = Review.objects.filter(isbn13=book.isbn13)
     username = request.user.username
     user = User.objects.get(username=username)
+
+    #get total rating for each review
+    r = Rate.objects.filter(isbn13=book).values('rated').annotate(Sum('rating'))
+    
+    #get list of reviews for book
+    reviews= Review.objects.filter(isbn13=book).order_by('review_date').reverse()
+        
+    #Get score of book
     avg_score = 0
     uscore = 5
     if reviews:
@@ -143,15 +153,37 @@ def book_details(request, bid):
         print ('excepted yo')
         book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
 
+    if not sort_newest:
+        review_list_best = []
+        reviews = Review.objects.filter(isbn13=book)
+        for review in reviews:
+            for rate in r:
+                if review.id == rate['rated']:
+                    item = {'login_name': review.login_name,
+                            'id': review.id,
+                            'review_score': review.review_score,
+                            'review_text': review.review_text,
+                            'review_date': review.review_date,
+                            'total_rating': rate['rating__sum'],
+                    }
+                    review_list_best.append(item)
+        #reviews = sorted(review_list_best, key=lambda k: k['total_rating'])
+        reviews = sorted(review_list_best, key=itemgetter('total_rating'), reverse=True)
 
-    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': rounded_score, 'uscore':uscore, 'reviews':reviews})
+
+    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': rounded_score, 'uscore':uscore, 'reviews':reviews, 'review_ratings':r})
+
+def review_filter_newest(request, bid):
+    rend = book_details(request, bid, sort_newest=True)
+    return rend
+
+def review_filter_best(request, bid):
+    rend = book_details(request, bid)
+    return rend
 
 @login_required
 def review(request, bid):
     book = get_object_or_404(Book, isbn10=bid)
-    #TODO: Check if user is currently logged in, if not redirect to login page
-
-    #get username uname = ''
     username = request.user.username
     user = User.objects.get(username=username)
     full_name = request.user.first_name + ' ' + request.user.last_name
@@ -166,6 +198,7 @@ def review(request, bid):
         uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
         uscore = 5
         reviews = Review.objects.filter(isbn13=book.isbn13)
+        r = Rate.objects.filter(isbn13=book).values('rated').annotate(Sum('rating'))
         avg_score = 0
         if reviews:
             for review in reviews:
@@ -182,7 +215,8 @@ def review(request, bid):
         except:
             print ('excepted yo')
             book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
-        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':rounded_score, 'uscore':uscore, 'error_message':"Please enter a valid review!"})
+
+        return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':rounded_score, 'uscore':uscore, 'error_message':"Please enter a valid review!", 'reviews':reviews, 'review_ratings': r})
 
     #if user has valid review, insert into Review table
     try:
@@ -212,6 +246,32 @@ def add_to_cart(request, bid):
         return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
 
     return render(request, 'bookstore/index.html', {'book_in_cart': book.title})
+
+@login_required
+def rate_user_review(request, bid, rid):
+    username = request.user.username
+    user = User.objects.get(username=username)
+
+    book = Book.objects.get(isbn10=bid)
+    review = Review.objects.get(id=rid)
+
+    rating = request.POST['rate']
+    
+    try:
+        if user == review.login_name:
+            raise Exception("hoho")
+        rate = Rate(rater=user,rated=review,rating=int(rating),isbn13=book)
+        rate.save()
+    except IntegrityError as e:
+        messages.add_message(request, messages.WARNING, "You already have rated this review!")
+        print("hehyy")
+        return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
+    except Exception as ee:
+        messages.add_message(request, messages.WARNING, "You cannot rate your own review.")
+        print("hehyy")
+        return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
+
+    return HttpResponseRedirect(reverse("bookstore:book_details", args=(bid,)))
 
 
 class AccountView(View):

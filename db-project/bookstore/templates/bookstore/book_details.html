@@ -145,7 +145,7 @@
 	        <label for="rating1">1</label>
 		    </span>
 		    <h6 class="w3-text-grey w3-margin-left w3-padding-top" style="display:inline"><i class="fa-fw"></i>{{avg_score}}/10 stars</h6>
-        {% if avg_score == 0 %}<p class="w3-text-black"><strong>No users have reviewed this book. Be the first!</strong></p>
+        {% if avg_score == 0 %}<p class="w3-text-red"><strong>No users have reviewed this book. Be the first!</strong></p>
           {% endif %}
 
 		    </p>
@@ -175,14 +175,11 @@
             {% endif %}
 
             {% if messages %}
-              <ul class="messages w3-text-grey">
+              <ul class="messages">
                   {% for message in messages %}
                       {% if message.tags == "info" %}
-                        <script type="text/javascript">
-                        var elem = document.getElementById("addtocart");
-                          elem.style.visibility = "hidden" ;
-                        </script>
-                        <p class=" w3-text-black"><strong>Sorry, you have already reviewed this item!</strong></p>
+                        
+                        <i class="w3-text-red"><strong>Sorry, you have already reviewed this item!</strong></i>
                       {% endif %}
                   {% endfor %}
               </ul>
@@ -236,17 +233,64 @@
 
       <div class="w3-container w3-card-2 w3-white">
         <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>See Community Reviews</h2>
+        {% if messages %}
+          <ul class="">
+              {% for message in messages %}
+                  {% if message.tags == "warning" %}
+                    
+                    <i class="w3-text-red"><strong>{{message}}</strong></i>
+                  {% endif %}
+              {% endfor %}
+            </ul> 
+          {% endif %}
+        <div class="sort-by">
+          <p>Sort by:
+          <a href="{% url 'bookstore:review_filter_newest' book.isbn10 %}">Newest</a> |
+          <a href="{% url 'bookstore:review_filter_best' book.isbn10 %}">Best</a></p>
+        </div>
 
+        <div id="review-div">
         {% for review in reviews %}
             <div class="w3-container">
-              <h5 class="w3-opacity"><b>{{review.login_name}} says</b></h5>
+              <h5 class="w3-opacity"><b>{{review.login_name.first_name}} {{review.login_name.last_name}} says</b></h5>
               <h6 class="w3-text-grey w3-small">On {{review.review_date}}</h6>
-              <p>{{review.review_text}}</p>
-              <hr>
+              <p class="w3-text-black">{{review.review_text}}</p>
+                {% for i in review_ratings %}
+                  {% if i.rated == review.id %}
+                    Usefulness Rating: {{i.rating__sum}}
+                  {% endif %}
+                {% endfor %}
+              <form action="{% url 'bookstore:rate_user_review' book.isbn10 review.id %}" method="post">
+                {% csrf_token %}
+                <p id="{{review.id}}3" class="w3-text-grey">Did you find this review helpful?
+                  <button name="rate" id="{{review.id}}" value="0" class="w3-btn w3-border w3-round-large w3-white w3-tiny">Useless</button>
+                  <button name="rate" id="{{review.id}}1" value="1" class="w3-btn w3-border w3-round-large w3-white w3-tiny">Useful</button>
+                  <button name="rate" id="{{review.id}}2" value="2" class="w3-btn w3-border w3-round-large w3-white w3-tiny">Very Useful</button>
+                </p>
+              </form>
+              <p></p>
+              <hr> 
             </div>
-
           {% endfor %}
 
+          </div>
+
+ <!--          {% for rating in review_ratings %}
+            {% for review in reviews %}
+              {% if rating.rater == review.login_name %}
+                <script>
+                  var elem = document.getElementById({{review.id}});
+                    elem.style.display = "none" ;
+                  var elem1 = document.getElementById({{review.id}}+"1");
+                    elem1.style.display = "none" ;
+                  var elem2 = document.getElementById({{review.id}}+"2");
+                    elem2.style.display = "none" ;
+                  var elem3 = document.getElementById({{review.id}}+"3");
+                  elem3.innerHTML = "You have already rated this review."
+                </script>
+              {% endif %}
+            {% endfor %}
+          {% endfor %} -->
         
       </div>
 
