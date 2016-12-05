@@ -288,33 +288,6 @@ def review(request, bid):
     uscore = int(request.POST['ratinga'])
     #Check if review was submitted
     ureview = request.POST['ureview']
-    # if ureview == '':
-    #     book = get_object_or_404(Book, isbn10=bid)
-    #     uri = "http://www.goodreads.com/book/title?format=xml&key=VZTtD5ycbJ7Azy1BnZmg&isbn=%s" %(str(bid))
-    #     uscore = 5
-    #     reviews = Review.objects.filter(isbn13=book.isbn13)
-    #     r = Rate.objects.filter(isbn13=book).values('rated').annotate(Avg('rating'))
-    #     no_reviews = len(reviews)
-    #     avg_score = 0
-    #     if reviews:
-    #         for review in reviews:
-    #             avg_score += review.review_score
-    #         avg_score = avg_score/len(reviews)
-    #     rounded_score = round(avg_score)
-    #     try:
-    #         f = urllib.request.urlopen(uri)
-    #         data = f.read()
-    #         f.close()
-    #         data = xmltodict.parse(data)
-    #         #print (data['GoodreadsResponse']['book']['image_url'])
-    #         book_img = data['GoodreadsResponse']['book']['image_url']
-    #     except:
-    #         print ('excepted yo')
-    #         book_img = 'http://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png'
-
-    #     return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score':rounded_score, 'uscore':uscore, 'error_message':"Please enter a valid review!", 'reviews':reviews, 'review_ratings': r, 'no_reviews': no_reviews})
-
-    #if user has valid review, insert into Review table
     try:
         review = Review(login_name=user, isbn13=book, review_score=uscore, review_text=ureview, review_date=datetime.date.today())
         review.save()
@@ -481,7 +454,7 @@ class BookstoreAdminView(UserPassesTestMixin, View):
 class CartView(View):
     template_name = 'bookstore/cart.html'
 
-    def get(self, request):
+    def get(self, request, not_enough=[]):
         user = request.user
         cart = ShoppingCart.objects.filter(login_name=user.id)
         books_in_cart = Book.objects.filter(isbn13__in=cart.values('isbn13'))
@@ -507,6 +480,9 @@ class CartView(View):
                     finally:
                         img_dict[b.isbn13] = book_img
         content['img_dict'] = img_dict
+        if len(not_enough) > 0:
+            content['not_enough'] = not_enough
+            print (content['not_enough'])
         return render(request, self.template_name, content)
 
 class OrderView(View):
@@ -514,20 +490,30 @@ class OrderView(View):
     def post(self, request):
         username = request.user.username
         print(request.POST)
+        insufficient_stock = []
         for k,v in request.POST.items():
+            print ("1")
             if "Submit" in request.POST.keys():
                 if len(k)== 13:
+                    print ("2")
                     user = User.objects.get(username=username)
                     book = Book.objects.get(isbn13=k)
-                    order_status = "Processed"
-                    order = CustomerOrder(login_name=user, isbn13=book, num_order=int(v), order_date=datetime.date.today()+datetime.timedelta(1), order_status=order_status)
-                    order.save()
+                    print (v)
+                    if book.num_copies - int(v) < 0:
+                        insufficient_stock.append(book.isbn13)
+                    else:
+                        order_status = "Processed"
+                        order = CustomerOrder(login_name=user, isbn13=book, num_order=int(v), order_date=datetime.date.today()+datetime.timedelta(1), order_status=order_status)
+                        order.save()
 
-                    ShoppingCart.objects.filter(login_name=user).delete()
+                        ShoppingCart.objects.filter(login_name=user).delete()
             else:
                 user = User.objects.get(username=username)
                 ShoppingCart.objects.filter(login_name=user, isbn13=request.POST['remove']).delete()
-
+        if len(insufficient_stock) > 0:
+            print (insufficient_stock)
+            return CartView().get(self.request, not_enough=insufficient_stock)
+        
         return HttpResponseRedirect(reverse('bookstore:cart'))
 
     def get(self, request):
