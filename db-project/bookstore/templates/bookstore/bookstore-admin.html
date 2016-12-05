@@ -1,13 +1,70 @@
 {% extends 'bookstore/base.html' %}
 {% block title %}Bookstore Admin{% endblock %}
+{% load staticfiles %}
+
+{% block stylesheet %}
+<link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/bookstore-admin.css' %}">
+{% endblock %}
+
 
 {% block body %}
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-12 col-md-7">
-        <div class="panel panel-default">
+        <h3>Bookstore Administration</h3>
+        {% if message %}
+          <p class="success-message">
+            <strong>{{ message }}</strong>
+          </p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default new-book-panel">
           <div class="panel-body">
-            <h3>Bookstore Admin View</h3>
+            <h3>Add New Book</h3>
+            {% if error_message %}
+              <p>
+                <strong>{{ error_message }}</strong>
+              </p>
+            {% endif %}
+            <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {% with new_book_form as form %}
+              {% include 'bookstore/form-template.html' %}
+              {% endwith %}
+              <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-10">
+                  <button type="submit" name="new-book-submit" class="btn btn-success">Add new book</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default add-copies-panel">
+          <div class="panel-body">
+            <h3>Add More Copies</h3>
+            {% if error_message %}
+              <p>
+                <strong>{{ error_message }}</strong>
+              </p>
+            {% endif %}
+            <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {% with add_copies_form as form %}
+              {% include 'bookstore/form-template.html' %}
+              {% endwith %}
+              <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-10">
+                  <button type="submit" name="add-copies-submit" class="btn btn-success">Add more copies</button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>

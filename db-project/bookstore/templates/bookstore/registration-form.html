@@ -9,7 +9,7 @@
       <div class="col-sm-12 col-md-7">
         <div class="panel panel-default">
           <div class="panel-body">
-            
+
             {% if not user.is_anonymous %}
             <h5>You are currently logged in as {{user.username}}</h5>
             {% endif %}
@@ -27,7 +27,7 @@
                 {% include 'bookstore/form-template.html' %}
               {% endfor %}
               <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
+                <div class="col-sm-offset-3 col-sm-10">
                   <button type="submit" class="btn btn-success">Register</button>
                 </div>
               </div>

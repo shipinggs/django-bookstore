@@ -17,7 +17,7 @@
       {% if cart %}
       {% for item in cart %}
         <div class="w3-container">
-            <h5 class="w3-xlarge"><a href="{% url 'bookstore:book_details' item.isbn13.isbn10 %}"><b>{{b.title}}</b></h5></a>
+            <h5 class="w3-xlarge"><a href="{% url 'bookstore:book_details' item.isbn13.isbn10 %}"><b>{{item.isbn13.title}}</b></h5></a>
             {% for k,v in img_dict.items %}
               {% if k == item.isbn13.isbn13 %}
               <img style="margin-bottom:10px" src={{v}}>
@@ -35,10 +35,10 @@
             <button style="float:left" name="remove" value={{item.isbn13.isbn13}} type="submit" class="w3-margin-right w3-margin-bottom w3-btn w3-yellow">Remove</button>
             <p style="cart-submit text-align=right" class="w3-right w3-text-dark-grey">
             Copies:  <input type="number" min="1" max="{{item.isbn13.num_copies}}" value="{{item.num_order}}" id="new_orders" style="width=50%" name="{{item.isbn13.isbn13}}"></p>
-            
+
             <br>
             <hr>
-          
+
         </div>
       {% endfor %}
     <button style="float:right" name="Submit" value="Submit" type="submit" class="w3-margin-right w3-margin-bottom w3-btn">Submit</button>

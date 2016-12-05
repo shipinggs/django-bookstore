@@ -21,7 +21,8 @@ class Book(models.Model):
     years = models.IntegerField()
     num_copies = models.IntegerField()
     price = models.FloatField()
-    book_format = models.CharField(max_length=9)
+    format_choices = (('Hardcover', 'Hardcover'), ('Paperback', 'Paperback'))
+    book_format = models.CharField(max_length=9, choices=format_choices)
     keyword = models.CharField(max_length=255, blank=True, null=True)
     book_subject = models.CharField(max_length=255, blank=True, null=True)
 
@@ -39,7 +40,7 @@ class CustomerOrder(models.Model):
     class Meta:
         managed = True
         db_table = 'customer_order'
-        
+
 
 
 class Rate(models.Model):
