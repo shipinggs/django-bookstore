@@ -57,26 +57,24 @@
     {% for item in orders %}
    
         <div class="w3-container">
-        {% for b in books_ordered %}
         
-          {% if item.isbn13.isbn13 == b.isbn13 %}
           
-            <h5 class="w3-large"><u><a href="{% url 'bookstore:book_details' b.isbn10 %}"><b>{{b.title}}</b></u></h5></a>
+            <h5 class="w3-large"><u><a href="{% url 'bookstore:book_details' item.isbn13.isbn10 %}"><b>{{item.isbn13.title}}</b></u></h5></a>
             <br>
 
             <p style="text-align=left" class="w3-left w3-text-dark-grey">
             <div class="w3-container">
-              <p class="w3-left w3-text-dark-grey">ISBN13: {{b.isbn13}}</p>
+              <p class="w3-left w3-text-dark-grey">ISBN13: {{item.isbn13.isbn13}}</p>
             </div>
             <div class="w3-container">
-              <p class="w3-left w3-text-dark-grey">ISBN10: {{b.isbn10}}</p>
+              <p class="w3-left w3-text-dark-grey">ISBN10: {{item.isbn13.isbn10}}</p>
             </div>
             <div class="w3-container">
               <p class="w3-left w3-text-dark-grey">Date Ordered: {{item.order_date}}</p>
             </div>
             <div class="w3-container">
               <p class="w3-left w3-text-dark-grey">Total Price:&nbsp </p>
-              <p id={{item.isbn13.isbn13}}>nun</p>
+              <p id={{item.id}}>nun</p>
               
             </div>
             <div class="w3-container">
@@ -87,14 +85,13 @@
             </div>
             <script>
                 var c = {{item.isbn13.price}}*{{item.num_order}};
-                document.getElementById({{item.isbn13.isbn13}}).innerHTML='$'+c;
+                document.getElementById({{item.id}}).innerHTML='$'+c;
               
             </script>
 
             <br>
             <hr>
-          {% endif %}
-        {% endfor %}
+         
         </div>
       {% endfor %}
 

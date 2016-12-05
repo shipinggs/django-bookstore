@@ -219,8 +219,8 @@ def query(search_values, query_type):
 
 def book_details(request, bid, sort_newest=True):
     book = get_object_or_404(Book, isbn10=bid)
-    username = request.user.username
-    user = User.objects.get(username=username)
+    # username = request.user.username
+    # user = User.objects.get(username=username)
 
     #get total rating for each review
     r = Rate.objects.filter(isbn13=book).values('rated').annotate(Avg('rating'))
