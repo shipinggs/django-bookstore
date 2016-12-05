@@ -4,7 +4,6 @@
 
 {% block stylesheet %}
 <link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/book-details.css'  %}">
-<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 {% endblock %}
@@ -29,13 +28,13 @@
         <div class="w3-container">
           <div>
           <p align="center">
-          
+
 
             <form id="addtocart" method="post" action="{% url 'bookstore:add_to_cart' book.isbn10 %}">
               {% csrf_token %}
-              
+
                 <button type='submit' value="Add To Cart" class="w3-btn-block w3-yellow w3-hover-khaki" style="font-family: 'Roboto';" text-align: left>
-                  
+
                   <i class="fa fa-shopping-cart fa-fw w3-margin-right w3-large w3-text-black"></i> Add To Cart
                 </button>
             </form>
@@ -53,8 +52,8 @@
                 {% endfor %}
             </ul>
             {% endif %}
-          
-          	
+
+
 		  </p>
 
 		  <div id="content-left">
@@ -115,7 +114,7 @@
       <div class="w3-container w3-card-2 w3-white w3-margin-bottom">
         <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-book fa-fw w3-margin-right w3-xxlarge w3-text-dark-grey"></i>{{book.title}}</h2>
         <div class="w3-container">
-          <h5 class="w3-opacity"><b>by {{book.author}}</b></h5> 
+          <h5 class="w3-opacity"><b>by {{book.author}}</b></h5>
           <h6 class="w3-text-teal w3-xlarge w3-section"><i class="fa-fw"></i>Summary: {{book.keyword}}</h6>
          <p>
          	<h6 class="w3-text-grey w3-large" style="display:inline"><i class="fa fa-bar-chart-o fa-fw"></i>Rating 	&nbsp;</h6>
@@ -179,7 +178,7 @@
               <ul class="messages">
                   {% for message in messages %}
                       {% if message.tags == "info" %}
-                        
+
                         <i class="w3-text-red"><strong>Sorry, you have already reviewed this item!</strong></i>
                       {% endif %}
                   {% endfor %}
@@ -238,11 +237,11 @@
           <ul class="">
               {% for message in messages %}
                   {% if message.tags == "warning" %}
-                    
+
                     <i class="w3-text-red"><strong>{{message}}</strong></i>
                   {% endif %}
               {% endfor %}
-            </ul> 
+            </ul>
           {% endif %}
         <div class="sort-by">
           <p>Sort by:
@@ -271,7 +270,7 @@
                 </p>
               </form>
               <p></p>
-              <hr> 
+              <hr>
             </div>
           {% endfor %}
 
@@ -293,7 +292,7 @@
               {% endif %}
             {% endfor %}
           {% endfor %} -->
-        
+
       </div>
 
     <!-- End Right Column -->

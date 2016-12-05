@@ -4,7 +4,6 @@
 
 {% block stylesheet %}
 <link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/cart-style.css'  %}" />
-<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 {% endblock %}
@@ -55,10 +54,10 @@
     <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-book fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Orders Placed</h2>
 
     {% for item in orders %}
-   
+
         <div class="w3-container">
-        
-          
+
+
             <h5 class="w3-large"><u><a href="{% url 'bookstore:book_details' item.isbn13.isbn10 %}"><b>{{item.isbn13.title}}</b></u></h5></a>
             <br>
 
@@ -75,7 +74,7 @@
             <div class="w3-container">
               <p class="w3-left w3-text-dark-grey">Total Price:&nbsp </p>
               <p id={{item.id}}>nun</p>
-              
+
             </div>
             <div class="w3-container">
               <p class="w3-left w3-text-dark-grey">Order Status: {{item.order_status}}</p>
@@ -86,12 +85,12 @@
             <script>
                 var c = {{item.isbn13.price}}*{{item.num_order}};
                 document.getElementById({{item.id}}).innerHTML='$'+c;
-              
+
             </script>
 
             <br>
             <hr>
-         
+
         </div>
       {% endfor %}
 
