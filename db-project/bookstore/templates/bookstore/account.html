@@ -43,7 +43,7 @@
                 <li class="order-panel__list-item">
                   <h4>{{ order.date }}</h4>
                   <p>
-                    Title: {{ order.title }}
+                    Title: <a href="{% url 'bookstore:book_details' order.isbn10 %}">{{ order.title }}</a>
                   </p>
                   <p>
                     ISBN13: {{ order.isbn13 }}
@@ -72,7 +72,7 @@
               <ul class="review-panel__list">
                 {% for review in reviews %}
                 <li class="review-panel__list-item">
-                  <h4>{{ review.title }}</h4>
+                  <h4><a href="{% url 'bookstore:book_details' review.isbn10 %}">{{ review.title }}</a></h4>
                   <p>
                     Date reviewed: {{ review.date }}
                   </p>
@@ -81,6 +81,34 @@
                   </p>
                   <p>
                     You said: "{{ review.text }}"
+                  </p>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default rating-panel">
+            <div class="panel-body">
+              <h3>Reviews You Rated</h3>
+              <ul class="rating-panel__list">
+                {% for rating in ratings %}
+                <li class="rating-panel__list-item">
+                  <h4>{{ rating.reviewer }}'s review of <a href="{% url 'bookstore:book_details' rating.isbn10 %}">{{ rating.title }}</a></h4>
+                  <p>
+                    ISBN13: {{ rating.isbn13 }}
+                  </p>
+                  <p>
+                    Score: {{ rating.review_score }}/10
+                  </p>
+                  <p>
+                    Review: "{{ rating.review_text }}"
+                  </p>
+                  <p class='rating-list__rating-score'>
+                    You rated this review: {{ rating.rating }}
                   </p>
                 </li>
                 {% endfor %}

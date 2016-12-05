@@ -377,37 +377,63 @@ class AccountView(View):
         user = request.user
         orders = CustomerOrder.objects.filter(login_name=user.id)
         books_ordered = Book.objects.filter(isbn13__in=orders.values('isbn13'))
-        reviews = Review.objects.filter(login_name=user.id)
-        books_reviewed = Book.objects.filter(isbn13__in=reviews.values('isbn13'))
         orders_with_details = []
-        reviews_with_details = []
-
         for order in orders:
             for book in books_ordered:
-                if order.isbn13.isbn13 == book.isbn13:
+                if (order.isbn13.isbn13 == book.isbn13):
                     orders_with_details.append({
                         'date': order.order_date,
                         'title': book.title,
+                        'isbn10': book.isbn10,
                         'isbn13': book.isbn13,
                         'price': book.price,
                         'quantity': order.num_order,
                         'total_cost': book.price * order.num_order
                     })
 
+        reviews = Review.objects.filter(login_name=user.id)
+        books_reviewed = Book.objects.filter(isbn13__in=reviews.values('isbn13'))
+        reviews_with_details = []
         for review in reviews:
             for book in books_reviewed:
-                if review.isbn13.isbn13 == book.isbn13:
+                if (review.isbn13.isbn13 == book.isbn13):
                     reviews_with_details.append({
                         'title': book.title,
+                        'isbn10': book.isbn10,
                         'isbn13': book.isbn13,
                         'date': review.review_date,
                         'score': review.review_score,
                         'text': review.review_text
                     })
 
+        ratings = Rate.objects.filter(rater=user.id).order_by('-rating')
+        books_rated = Book.objects.filter(isbn13__in=ratings.values('isbn13'))
+        ratings_with_details = []
+        for rate in ratings:
+            for book in books_rated:
+                if (rate.isbn13.isbn13 == book.isbn13):
+                    rating_string = ''
+                    if (rate.rating == 0):
+                        rating_string = 'Useless'
+                    elif (rate.rating == 1):
+                        rating_string = 'Useful'
+                    else:
+                        rating_string = 'Very useful'
+
+                    ratings_with_details.append({
+                        'title': book.title,
+                        'isbn10': book.isbn10,
+                        'isbn13': book.isbn13,
+                        'reviewer': rate.rated.login_name.first_name + ' ' + rate.rated.login_name.last_name,
+                        'review_score': rate.rated.review_score,
+                        'review_text': rate.rated.review_text,
+                        'rating': rating_string
+                    })
+
         return render(request, self.template_name, {
             'orders': orders_with_details,
-            'reviews': reviews_with_details
+            'reviews': reviews_with_details,
+            'ratings': ratings_with_details
         })
 
 class BookstoreAdminView(UserPassesTestMixin, View):
@@ -546,6 +572,8 @@ class LoginFormView(View):
 
         if user is not None:
             login(request, user)
+            if ('logout' in self.request.GET.get('next')):
+                return redirect('bookstore:home')
             return redirect(self.request.GET.get('next', 'bookstore:home'))
 
         return render(request, self.template_name, {
