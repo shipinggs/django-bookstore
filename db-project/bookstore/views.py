@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Book, Review, ShoppingCart, CustomerOrder,Rate
+from .models import Book, Review, ShoppingCart, CustomerOrder, Rate
 from django.db.models import Q, Sum, Count, Avg
 import urllib
 import xmltodict
@@ -21,7 +21,7 @@ from django.http import HttpResponseRedirect
 
 from django.db import IntegrityError
 
-from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm, NewBookForm, AddCopiesForm
+from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm, NewBookForm, AddCopiesForm, StatisticsForm
 
 isbn_list_of_dicts = []
 
@@ -207,13 +207,19 @@ def query(search_values, query_type):
             average_score = 0
 
         # This dictionary will be appended to a list which will then be used in the html page
-        append_this_dict = {'isbn10': i, 'isbn13': book.isbn13,'data': {  'hits': temp_dict[i][0],
-                                                    'url': temp_dict[i][1],
-                                                    'title': temp_dict[i][2].title,
-                                                    'publisher': temp_dict[i][2].publisher,
-                                                    'year': temp_dict[i][2].years,
-                                                    'author': temp_dict[i][2].author,
-                                                    'average_score': average_score}}
+        append_this_dict = {
+            'isbn10': i,
+            'isbn13': book.isbn13,
+            'data': {
+                'hits': temp_dict[i][0],
+                'url': temp_dict[i][1],
+                'title': temp_dict[i][2].title,
+                'publisher': temp_dict[i][2].publisher,
+                'year': temp_dict[i][2].years,
+                'author': temp_dict[i][2].author,
+                'average_score': average_score
+            }
+        }
         isbn_list_of_dicts.append(append_this_dict)
     return isbn_list_of_dicts
 
@@ -526,6 +532,71 @@ class OrderView(View):
 
     def get(self, request):
         return HttpResponseRedirect(reverse('bookstore:cart'))
+
+class StatisticsView(View):
+    statistics_form_class = StatisticsForm
+    template_name = 'bookstore/statistics.html'
+
+    def get(self, request):
+        statistics_form = self.statistics_form_class(None)
+        return render(request, self.template_name, {
+            'form': statistics_form
+        })
+
+    def post(self, request):
+        statistics_form = self.statistics_form_class(request.POST)
+        if statistics_form.is_valid():
+            month = request.POST['month']
+            view_top = int(request.POST['view_top'])
+            orders = CustomerOrder.objects.filter(order_date__month=month)
+            books = []
+            authors = []
+            publishers = []
+            book_count = {}
+            author_count = {}
+            publisher_count = {}
+            for order in orders:
+                if order.isbn13.isbn13 not in book_count:
+                    book_count[order.isbn13.isbn13] = order.num_order
+                else:
+                    book_count[order.isbn13.isbn13] += order.num_order
+
+                if order.isbn13.author not in author_count:
+                    author_count[order.isbn13.author] = order.num_order
+                else:
+                    author_count[order.isbn13.author] += order.num_order
+
+                if order.isbn13.publisher not in publisher_count:
+                    publisher_count[order.isbn13.publisher] = order.num_order
+                else:
+                    publisher_count[order.isbn13.publisher] += order.num_order
+
+            # sort books by number of orders
+            sorted_book_count = sorted(book_count.items(), key=itemgetter(1), reverse=True)[:view_top]
+            sorted_author_count = sorted(author_count.items(), key=itemgetter(1), reverse=True)[:view_top]
+            sorted_publisher_count = sorted(publisher_count.items(), key=itemgetter(1), reverse=True)[:view_top]
+
+
+            for (isbn13, count) in sorted_book_count:
+                book = Book.objects.get(isbn13=isbn13)
+                books.append({
+                    'title': book.title,
+                    'author': book.author,
+                    'isbn10': book.isbn10,
+                    'isbn13': book.isbn13,
+                    'copies_sold': count
+                })
+
+            print sorted_publisher_count
+
+        return render(request, self.template_name, {
+            'form': statistics_form,
+            'request_post': True,
+            'books': books,
+            'authors': sorted_author_count,
+            'publishers': sorted_publisher_count
+        })
+
 
 class RegistrationFormView(View):
     user_form_class = UserRegistrationForm

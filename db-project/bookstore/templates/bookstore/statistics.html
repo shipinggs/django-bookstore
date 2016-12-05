@@ -1,0 +1,119 @@
+{% extends 'bookstore/base.html' %}
+{% block title %}Statistics{% endblock %}
+{% load staticfiles %}
+
+{% block stylesheet %}
+<link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/statistics.css' %}">
+{% endblock %}
+
+
+{% block body %}
+  <div class="container-fluid statistics-container">
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h3>View Monthly Statistics</h3>
+            {% if error_message %}
+            <div class="col-sm-10">
+              <span class="text-danger small">{{ error_message }}</span>
+            </div>
+            {% endif %}
+            <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {% include 'bookstore/form-template.html' %}
+              <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-10">
+                  <button type="submit" class="btn btn-primary">View Statistics</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if request_post %}
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <h3>Most Popular Books</h3>
+              {% if books %}
+              <ul class="panel__list">
+                {% for book in books %}
+                <li class="panel__list-item">
+                  <h4><a href="{% url 'bookstore:book_details' book.isbn10 %}">{{ book.title }}</a></h4>
+                  <p>
+                    Copies Sold: {{ book.copies_sold }}
+                  </p>
+                  <p>
+                    Author: {{ book.author }}
+                  </p>
+                  <p>
+                    ISBN13: {{ book.isbn13 }}
+                  </p>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <p>
+                No books ordered this month.
+              </p>
+              {% endif %}
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <h3>Most Popular Authors</h3>
+              {% if authors %}
+              <ul class="panel__list">
+                {% for author in authors %}
+                <li class="panel__list-item">
+                  <h4>{{ author.0 }}</h4>
+                  <p>
+                    Books Sold: {{ author.1 }}
+                  </p>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <p>
+                No books ordered this month.
+              </p>
+              {% endif %}
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <h3>Most Popular Publishers</h3>
+              {% if publishers %}
+              <ul class="panel__list">
+                {% for publisher in publishers %}
+                <li class="panel__list-item">
+                  <h4>{{ publisher.0 }}</h4>
+                  <p>
+                    Books Sold: {{ publisher.1 }}
+                  </p>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <p>
+                No books ordered this month.
+              </p>
+              {% endif %}
+            </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %}

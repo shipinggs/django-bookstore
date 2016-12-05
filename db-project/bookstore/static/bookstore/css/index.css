@@ -4,6 +4,14 @@
     text-align: center;
 }
 
+.success-message {
+    margin-bottom: 24px;
+    padding: 8px 32px;
+    border: #55CC10 2px solid;
+    border-radius: 4px;
+    color: #55CC10;
+}
+
 
 #rig {
     max-width:1400px;
