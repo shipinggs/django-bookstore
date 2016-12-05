@@ -38,6 +38,7 @@
         <div class="panel panel-default order-panel">
             <div class="panel-body">
               <h3>Your Order History</h3>
+              {% if orders %}
               <ul class="order-panel__list">
                 {% for order in orders %}
                 <li class="order-panel__list-item">
@@ -60,6 +61,11 @@
                 </li>
                 {% endfor %}
               </ul>
+              {% else %}
+              <p>
+                You have not ordered any book.
+              </p>
+              {% endif %}
             </div>
         </div>
       </div>
@@ -69,6 +75,7 @@
         <div class="panel panel-default review-panel">
             <div class="panel-body">
               <h3>Your Book Reviews</h3>
+              {% if reviews %}
               <ul class="review-panel__list">
                 {% for review in reviews %}
                 <li class="review-panel__list-item">
@@ -85,6 +92,9 @@
                 </li>
                 {% endfor %}
               </ul>
+              {% else %}
+              You have not reviewed any book.
+              {% endif %}
             </div>
         </div>
       </div>
@@ -94,6 +104,7 @@
         <div class="panel panel-default rating-panel">
             <div class="panel-body">
               <h3>Reviews You Rated</h3>
+              {% if ratings %}
               <ul class="rating-panel__list">
                 {% for rating in ratings %}
                 <li class="rating-panel__list-item">
@@ -113,6 +124,11 @@
                 </li>
                 {% endfor %}
               </ul>
+              {% else %}
+              <p>
+                You have not rated anybody's book review.
+              </p>
+              {% endif %}
             </div>
         </div>
       </div>

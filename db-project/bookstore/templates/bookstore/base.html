@@ -37,6 +37,9 @@
           </form>
           <ul class="nav navbar-nav navbar-right">
             {% if not user.is_anonymous %}
+            {% if user.is_staff %}
+            <li><a href="{% url 'bookstore:admin' %}">Admin</a></li>
+            {% endif %}
             <li><a href="{% url 'bookstore:cart' %}">Cart</a></li>
             <li><a href="{% url 'bookstore:account' %}">Account</a></li>
             <li><a href="{% url 'bookstore:logout' %}">Logout</a></li>

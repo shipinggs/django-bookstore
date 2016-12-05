@@ -440,10 +440,15 @@ class BookstoreAdminView(UserPassesTestMixin, View):
             new_book_form = self.new_book_form_class(None)
             isbn13 = request.POST['isbn13']
             num_copies_added = int(request.POST['num_copies'])
-            book = Book.objects.get(isbn13=isbn13)
-            book.num_copies += num_copies_added
-            book.save()
-            message = 'Copies are successfully added.'
+
+            try:
+                book = Book.objects.get(isbn13=isbn13)
+                book.num_copies += num_copies_added
+                book.save()
+                message = 'Copies are successfully added.'
+
+            except:
+                message = 'Book with ISBN13 ' + isbn13 + ' not found'
 
         return render(request, self.template_name, {
             'new_book_form': new_book_form,
