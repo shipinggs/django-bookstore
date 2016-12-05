@@ -1,3 +1,6 @@
+.account-container a {
+    color: #00796B;
+}
 .order-panel__list, .review-panel__list, .rating-panel__list {
     margin: 24px 0;
 }

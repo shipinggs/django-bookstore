@@ -21,7 +21,7 @@ from django.http import HttpResponseRedirect
 
 from django.db import IntegrityError
 
-from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm
+from .forms import SearchForm, UserRegistrationForm, ProfileForm, LoginForm, NewBookForm, AddCopiesForm
 
 isbn_list_of_dicts = []
 
@@ -380,7 +380,7 @@ class AccountView(View):
         orders_with_details = []
         for order in orders:
             for book in books_ordered:
-                if (order.isbn13.isbn13 == book.isbn13):
+                if order.isbn13.isbn13 == book.isbn13:
                     orders_with_details.append({
                         'date': order.order_date,
                         'title': book.title,
@@ -396,7 +396,7 @@ class AccountView(View):
         reviews_with_details = []
         for review in reviews:
             for book in books_reviewed:
-                if (review.isbn13.isbn13 == book.isbn13):
+                if review.isbn13.isbn13 == book.isbn13:
                     reviews_with_details.append({
                         'title': book.title,
                         'isbn10': book.isbn10,
@@ -411,7 +411,7 @@ class AccountView(View):
         ratings_with_details = []
         for rate in ratings:
             for book in books_rated:
-                if (rate.isbn13.isbn13 == book.isbn13):
+                if rate.isbn13.isbn13 == book.isbn13:
                     rating_string = ''
                     if (rate.rating == 0):
                         rating_string = 'Useless'
@@ -438,13 +438,45 @@ class AccountView(View):
 
 class BookstoreAdminView(UserPassesTestMixin, View):
     raise_exception = True
+    new_book_form_class = NewBookForm
+    add_copies_form_class = AddCopiesForm
     template_name = 'bookstore/bookstore-admin.html'
 
     def test_func(self):
         return self.request.user.is_staff
 
     def get(self, request):
-        return render(request, self.template_name)
+        new_book_form = self.new_book_form_class(None)
+        add_copies_form = self.add_copies_form_class(None)
+        return render(request, self.template_name, {
+            'new_book_form': new_book_form,
+            'add_copies_form': add_copies_form
+        })
+
+    def post(self,request):
+        new_book_form = self.new_book_form_class(request.POST)
+        add_copies_form = self.add_copies_form_class(request.POST)
+        message = ''
+        print (request.POST)
+        if ('new-book-submit' in request.POST) and new_book_form.is_valid():
+            add_copies_form = self.add_copies_form_class(None)
+            new_book_form.save()
+            message = 'Book has been successfully added.'
+
+        elif ('add-copies-submit' in request.POST) and add_copies_form.is_valid():
+            new_book_form = self.new_book_form_class(None)
+            isbn13 = request.POST['isbn13']
+            num_copies_added = int(request.POST['num_copies'])
+            book = Book.objects.get(isbn13=isbn13)
+            book.num_copies += num_copies_added
+            book.save()
+            message = 'Copies are successfully added.'
+
+        return render(request, self.template_name, {
+            'new_book_form': new_book_form,
+            'add_copies_form': add_copies_form,
+            'message': message
+        })
 
 class CartView(View):
     template_name = 'bookstore/cart.html'
