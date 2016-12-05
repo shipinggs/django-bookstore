@@ -18,23 +18,21 @@
       {% if cart %}
       {% for item in cart %}
         <div class="w3-container">
-        {% for b in books_in_cart %}
-          {% if item.isbn13.isbn13 == b.isbn13 %}
-            <h5 class="w3-xlarge"><a href="{% url 'bookstore:book_details' b.isbn10 %}"><b>{{b.title}}</b></h5></a>
+            <h5 class="w3-xlarge"><a href="{% url 'bookstore:book_details' item.isbn13.isbn10 %}"><b>{{b.title}}</b></h5></a>
             {% for k,v in img_dict.items %}
-              {% if k == b.isbn13 %}
+              {% if k == item.isbn13.isbn13 %}
               <img style="margin-bottom:10px" src={{v}}>
               {% endif %}
             {% endfor %}
             <br>
-            <p class="w3-text-dark-grey">Price: ${{b.price}}</p>
+            <p class="w3-text-dark-grey">Price: ${{item.isbn13.price}}</p>
+            <p class="w3-text-dark-grey">In Stock: {{item.isbn13.num_copies}}</p>
             <button style="float:left" name="remove" value={{b.isbn13}} type="submit" class="w3-margin-right w3-margin-bottom w3-btn w3-yellow">Remove</button>
             <p style="cart-submit text-align=right" class="w3-right w3-text-dark-grey">
-            Copies:  <input type="number" min="1" value="{{item.num_order}}" id="new_orders" style="width=50%" name="{{b.isbn13}}"></p>
+            Copies:  <input type="number" min="1" max="{{item.isbn13.num_copies}}" value="{{item.num_order}}" id="new_orders" style="width=50%" name="{{b.isbn13}}"></p>
             <br>
             <hr>
-          {% endif %}
-        {% endfor %}
+          
         </div>
       {% endfor %}
     <button style="float:right" name="Submit" value="Submit" type="submit" class="w3-margin-right w3-margin-bottom w3-btn">Submit</button>
@@ -85,7 +83,7 @@
             </div>
             <script>
                 var c = {{item.isbn13.price}}*{{item.num_order}};
-                document.getElementById({{item.id}}).innerHTML='$'+c;
+                document.getElementById({{item.id}}).innerHTML='$'+c.toFixed(2);
               
             </script>
 
