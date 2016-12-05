@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^account$', views.AccountView.as_view(), name='account'),
     url(r'^admin$', views.BookstoreAdminView.as_view(), name='admin'),
+    url(r'^stats$', views.StatisticsView.as_view(), name='stats'),
     url(r'^cart$', views.CartView.as_view(), name='cart'),
     url(r'^cart/order', views.OrderView.as_view(), name='order'),
     url(r'^home$', views.home, name='home'),

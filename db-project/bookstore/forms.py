@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Profile, Book
+from django.forms.extras import SelectDateWidget
 
 class SearchForm(forms.Form):
     search_value = forms.CharField(label='Search', max_length=100)
@@ -38,3 +39,22 @@ class NewBookForm(forms.ModelForm):
 class AddCopiesForm(forms.Form):
     isbn13 = forms.CharField(label='ISBN13', min_length=13, max_length=13)
     num_copies = forms.IntegerField(label='Copies to add')
+
+class StatisticsForm(forms.Form):
+    month_choices = (
+        ('1', 'Jan'),
+        ('2', 'Feb'),
+        ('3', 'Mar'),
+        ('4', 'Apr'),
+        ('5', 'May'),
+        ('6', 'Jun'),
+        ('7', 'Jul'),
+        ('8', 'Aug'),
+        ('9', 'Sep'),
+        ('10', 'Oct'),
+        ('11', 'Nov'),
+        ('12', 'Dec')
+    )
+
+    month = forms.ChoiceField(choices=month_choices)
+    view_top = forms.IntegerField(min_value=1)
