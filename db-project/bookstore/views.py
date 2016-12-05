@@ -333,11 +333,9 @@ def rate_user_review(request, bid, rid):
         rate.save()
     except IntegrityError as e:
         messages.add_message(request, messages.WARNING, "You already have rated this review!")
-        print("hehyy")
         return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
     except Exception as ee:
         messages.add_message(request, messages.WARNING, "You cannot rate your own review.")
-        print("hehyy")
         return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
 
     return HttpResponseRedirect(reverse("bookstore:book_details", args=(bid,)))
@@ -450,26 +448,24 @@ class CartView(View):
         content['img_dict'] = img_dict
         if len(not_enough) > 0:
             content['not_enough'] = not_enough
-            print (content['not_enough'])
+           
         return render(request, self.template_name, content)
 
 class OrderView(View):
 
     def post(self, request):
-        username = request.user.username
-        print(request.POST)
+        username = request.user.usernam
         insufficient_stock = []
         for k,v in request.POST.items():
-            print ("1")
             if "Submit" in request.POST.keys():
                 if len(k)== 13:
-                    print ("2")
                     user = User.objects.get(username=username)
                     book = Book.objects.get(isbn13=k)
-                    print (v)
                     if book.num_copies - int(v) < 0:
                         insufficient_stock.append(book.isbn13)
                     else:
+                        book.num_copies = book.num_copies - int(v)
+                        book.save()
                         order_status = "Processed"
                         order = CustomerOrder(login_name=user, isbn13=book, num_order=int(v), order_date=datetime.date.today()+datetime.timedelta(1), order_status=order_status)
                         order.save()
@@ -479,7 +475,6 @@ class OrderView(View):
                 user = User.objects.get(username=username)
                 ShoppingCart.objects.filter(login_name=user, isbn13=request.POST['remove']).delete()
         if len(insufficient_stock) > 0:
-            print (insufficient_stock)
             return CartView().get(self.request, not_enough=insufficient_stock)
         
         return HttpResponseRedirect(reverse('bookstore:cart'))
