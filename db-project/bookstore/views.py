@@ -486,7 +486,7 @@ class CartView(View):
 class OrderView(View):
 
     def post(self, request):
-        username = request.user.usernam
+        username = request.user.username
         insufficient_stock = []
         for k,v in request.POST.items():
             if "Submit" in request.POST.keys():
