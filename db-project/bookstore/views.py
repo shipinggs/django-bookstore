@@ -533,9 +533,13 @@ class OrderView(View):
     def get(self, request):
         return HttpResponseRedirect(reverse('bookstore:cart'))
 
-class StatisticsView(View):
+class StatisticsView(UserPassesTestMixin, View):
+    raise_exception = True
     statistics_form_class = StatisticsForm
     template_name = 'bookstore/statistics.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
 
     def get(self, request):
         statistics_form = self.statistics_form_class(None)
