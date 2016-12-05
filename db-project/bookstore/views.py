@@ -506,6 +506,9 @@ class OrderView(View):
                         order = CustomerOrder(login_name=user, isbn13=book, num_order=int(v), order_date=datetime.date.today()+datetime.timedelta(1), order_status=order_status)
                         order.save()
 
+                        book.num_copies -= int(v)
+                        book.save()
+
                         ShoppingCart.objects.filter(login_name=user).delete()
             else:
                 user = User.objects.get(username=username)
@@ -513,7 +516,7 @@ class OrderView(View):
         if len(insufficient_stock) > 0:
             print (insufficient_stock)
             return CartView().get(self.request, not_enough=insufficient_stock)
-        
+
         return HttpResponseRedirect(reverse('bookstore:cart'))
 
     def get(self, request):
