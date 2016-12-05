@@ -1,5 +1,11 @@
 {% extends 'bookstore/base.html' %}
 {% block title %}Your Account{% endblock %}
+{% load staticfiles %}
+
+{% block stylesheet %}
+<link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/account.css' %}">
+{% endblock %}
+
 
 {% block body %}
   <div class="container-fluid">
@@ -7,11 +13,79 @@
       <div class="col-sm-12 col-md-7">
         <div class="panel panel-default">
           <div class="panel-body">
-            <h3>Your Account View</h3>
+            <h3>Your Account Details</h3>
             {% if not user.is_anonymous %}
             <h5>You are logged on as {{ user.username }}</h5>
             {% endif %}
+            <p>
+              Name: {{ user.first_name }} {{ user.last_name }}
+            </p>
+            <p>
+              Credit card number: {{ user.profile.credit_card_number }}
+            </p>
+            <p>
+              Address: {{ user.profile.mailing_address }}
+            </p>
+            <p>
+              Phone number: {{ user.profile.phone_number }}
+            </p>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default order-panel">
+            <div class="panel-body">
+              <h3>Your Order History</h3>
+              <ul class="order-panel__list">
+                {% for order in orders %}
+                <li class="order-panel__list-item">
+                  <h4>{{ order.date }}</h4>
+                  <p>
+                    Title: {{ order.title }}
+                  </p>
+                  <p>
+                    ISBN13: {{ order.isbn13 }}
+                  </p>
+                  <p>
+                    Price: ${{ order.price }}
+                  </p>
+                  <p>
+                    Quantity: {{ order.quantity }}
+                  </p>
+                  <p>
+                    Total Order Cost: ${{ order.total_cost }}
+                  </p>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-7">
+        <div class="panel panel-default review-panel">
+            <div class="panel-body">
+              <h3>Your Book Reviews</h3>
+              <ul class="review-panel__list">
+                {% for review in reviews %}
+                <li class="review-panel__list-item">
+                  <h4>{{ review.title }}</h4>
+                  <p>
+                    Date reviewed: {{ review.date }}
+                  </p>
+                  <p>
+                    You rated: {{ review.score }}/10
+                  </p>
+                  <p>
+                    You said: "{{ review.text }}"
+                  </p>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
         </div>
       </div>
     </div>

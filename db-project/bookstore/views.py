@@ -224,7 +224,7 @@ def book_details(request, bid, sort_newest=True):
 
     #get total rating for each review
     r = Rate.objects.filter(isbn13=book).values('rated').annotate(Avg('rating'))
-    
+
     #get list of reviews for book
     reviews= Review.objects.filter(isbn13=book).order_by('review_date').reverse()
     no_reviews = len(reviews)
@@ -320,7 +320,7 @@ def review(request, bid):
         review.save()
     except IntegrityError as e:
         messages.add_message(request, messages.INFO, "You already reviewed this item!")
-       
+
         return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
 
     return render(request, 'bookstore/review_success.html', {'book':book})
@@ -338,7 +338,7 @@ def add_to_cart(request, bid):
     except IntegrityError as e:
         # messages.error(request, "You already have this book in your cart!")
         messages.add_message(request, messages.ERROR, "You already have this book in your cart!")
-       
+
         return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
 
     return render(request, 'bookstore/index.html', {'book_in_cart': book.title})
@@ -352,7 +352,7 @@ def rate_user_review(request, bid, rid):
     review = Review.objects.get(id=rid)
 
     rating = request.POST['rate']
-    
+
     try:
         if user == review.login_name:
             raise Exception("hoho")
@@ -374,7 +374,41 @@ class AccountView(View):
     template_name = 'bookstore/account.html'
 
     def get(self, request):
-        return render(request, self.template_name)
+        user = request.user
+        orders = CustomerOrder.objects.filter(login_name=user.id)
+        books_ordered = Book.objects.filter(isbn13__in=orders.values('isbn13'))
+        reviews = Review.objects.filter(login_name=user.id)
+        books_reviewed = Book.objects.filter(isbn13__in=reviews.values('isbn13'))
+        orders_with_details = []
+        reviews_with_details = []
+
+        for order in orders:
+            for book in books_ordered:
+                if order.isbn13.isbn13 == book.isbn13:
+                    orders_with_details.append({
+                        'date': order.order_date,
+                        'title': book.title,
+                        'isbn13': book.isbn13,
+                        'price': book.price,
+                        'quantity': order.num_order,
+                        'total_cost': book.price * order.num_order
+                    })
+
+        for review in reviews:
+            for book in books_reviewed:
+                if review.isbn13.isbn13 == book.isbn13:
+                    reviews_with_details.append({
+                        'title': book.title,
+                        'isbn13': book.isbn13,
+                        'date': review.review_date,
+                        'score': review.review_score,
+                        'text': review.review_text
+                    })
+
+        return render(request, self.template_name, {
+            'orders': orders_with_details,
+            'reviews': reviews_with_details
+        })
 
 class BookstoreAdminView(UserPassesTestMixin, View):
     raise_exception = True
@@ -475,8 +509,6 @@ class RegistrationFormView(View):
 
             # returns User object if credentials are correct
             user = authenticate(username=username, password=password)
-
-
 
             if user is not None:
                 if user.is_active:
