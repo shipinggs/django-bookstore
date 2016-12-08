@@ -223,16 +223,20 @@ def query(search_values, query_type):
         isbn_list_of_dicts.append(append_this_dict)
     return isbn_list_of_dicts
 
-def book_details(request, bid, sort_newest=True):
+def book_details(request, bid, sort_newest=True, rnum=None):
     book = get_object_or_404(Book, isbn10=bid)
-    # username = request.user.username
-    # user = User.objects.get(username=username)
+    reviews= Review.objects.filter(isbn13=book).order_by('review_date').reverse()
+    num_reviews = 5
+    if "num_review" in request.POST:
+        num_reviews = int(request.POST.get('num_review'))
+    elif rnum:
+        num_reviews = int(rnum)
 
+    reviews = reviews[:num_reviews]
     #get total rating for each review
     r = Rate.objects.filter(isbn13=book).values('rated').annotate(Avg('rating'))
 
-    #get list of reviews for book
-    reviews= Review.objects.filter(isbn13=book).order_by('review_date').reverse()
+    #get list of reviews for book, order by newest
     no_reviews = len(reviews)
     #Get score of book
     avg_score = 0
@@ -259,6 +263,13 @@ def book_details(request, bid, sort_newest=True):
         reviews = Review.objects.filter(isbn13=book)
         for review in reviews:
             for rate in r:
+                item = {'login_name': review.login_name,
+                            'id': review.id,
+                            'review_score': review.review_score,
+                            'review_text': review.review_text,
+                            'review_date': review.review_date,
+                            'total_rating': 0,
+                    }
                 if review.id == rate['rated']:
                     item = {'login_name': review.login_name,
                             'id': review.id,
@@ -267,19 +278,17 @@ def book_details(request, bid, sort_newest=True):
                             'review_date': review.review_date,
                             'total_rating': rate['rating__avg'],
                     }
-                    review_list_best.append(item)
-        #reviews = sorted(review_list_best, key=lambda k: k['total_rating'])
-        reviews = sorted(review_list_best, key=itemgetter('total_rating'), reverse=True)
+                review_list_best.append(item)
+        reviews = sorted(review_list_best, key=itemgetter('total_rating'), reverse=True)[:num_reviews]
 
+    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': rounded_score, 'uscore':uscore, 'reviews':reviews, 'review_ratings':r, "no_reviews":no_reviews, 'rnum':num_reviews, 'sort_newest': sort_newest} )
 
-    return render(request, 'bookstore/book_details.html', {'book': book, 'book_img': book_img, 'avg_score': rounded_score, 'uscore':uscore, 'reviews':reviews, 'review_ratings':r, "no_reviews":no_reviews})
-
-def review_filter_newest(request, bid):
-    rend = book_details(request, bid)
+def review_filter_newest(request, bid, rnum):
+    rend = book_details(request, bid, rnum=rnum)
     return rend
 
-def review_filter_best(request, bid):
-    rend = book_details(request, bid, sort_newest=False)
+def review_filter_best(request, bid, rnum):
+    rend = book_details(request, bid, sort_newest=False, rnum=rnum)
     return rend
 
 @login_required
@@ -334,13 +343,13 @@ def rate_user_review(request, bid, rid):
 
     try:
         if user == review.login_name:
-            raise Exception("hoho")
+            raise Exception("Error")
         rate = Rate(rater=user,rated=review,rating=int(rating),isbn13=book)
         rate.save()
-    except IntegrityError as e:
-        messages.add_message(request, messages.WARNING, "You already have rated this review!")
+    except IntegrityError as ie:
+        messages.add_message(request, messages.WARNING, "You have already rated this review!")
         return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
-    except Exception as ee:
+    except Exception as e:
         messages.add_message(request, messages.WARNING, "You cannot rate your own review.")
         return HttpResponseRedirect(reverse('bookstore:book_details', args=(bid,)))
 
@@ -586,7 +595,7 @@ class StatisticsView(UserPassesTestMixin, View):
                     'copies_sold': count
                 })
 
-            print sorted_publisher_count
+            print (sorted_publisher_count)
 
         return render(request, self.template_name, {
             'form': statistics_form,

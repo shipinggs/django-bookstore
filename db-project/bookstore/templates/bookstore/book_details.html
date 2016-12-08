@@ -3,12 +3,13 @@
 {% load staticfiles %}
 
 {% block stylesheet %}
-<link rel="stylesheet" type="text/css" href="{% static 'bookstore/css/book-details.css'  %}">
-<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="{% static 'bookstore/css/book-details.css'  %}"/>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css"/>
 {% endblock %}
 
 {% block body %}
+
 
 <!-- Page Container -->
 <div class="w3-content w3-margin-top" style="max-width:1400px;">
@@ -247,14 +248,68 @@
           {% endif %}
         <div class="sort-by">
           <p>Sort by:
-          <a href="{% url 'bookstore:review_filter_newest' book.isbn10 %}">Newest</a> |
-          <a href="{% url 'bookstore:review_filter_best' book.isbn10 %}">Best</a></p>
+          <a href="{% url 'bookstore:review_filter_newest' book.isbn10 rnum %}">Newest</a> |
+          <a href="{% url 'bookstore:review_filter_best' book.isbn10 rnum %}">Best</a></p>
         </div>
+        <p style="display: inline-block">Showing top &nbsp; 
+        <form method="post" {% if sort_newest %} action="{% url 'bookstore:review_filter_newest' book.isbn10 rnum %}" {% else %} action="{% url 'bookstore:review_filter_best' book.isbn10 rnum %}" {% endif %} style="display: inline-block">
+          {% csrf_token %}
+          <select onchange="this.form.submit()" class="w3-select review-drop" name="num_review">
 
+            <option disabled selected> </option>
+            <option id='1' value="1" {% if rnum == 1 %}selected{%endif%}>1</option>
+            <option id='5' value="5" {% if rnum == 5 %}selected{%endif%}>5</option>
+            <option id='10' value="10" {% if rnum == 10 %}selected{%endif%}>10</option>
+            <option id='99' value="99" {% if rnum == 99 %}selected{%endif%}>99</option>
+          </select>
+
+        </form>
+         review(s)
+        </p>
+       <!--  <p class="dropdown">
+          Showing top
+          <a href="javascript:void(0)" class="drop w3-text-blue" onclick="dropMe()">5</a>
+          <div class="dropdown-content" id="myDropdown">
+            <form id='no_of_reviews' method="post" action="{% url 'bookstore:book_details' book.isbn10 %}">
+            {% csrf_token %}
+            <input type='select' name='rnum' value='1'>
+            <a href="#5" name='rnum' value='5'>5</a>
+            <a href="#10" name='rnum' value='10'>10</a>
+            <a href="#all" name='rnum' value='all'>all</a>
+            </form>
+          </div>
+           reviews
+        <p>
+
+        <script>
+          function dropMe() {
+              document.getElementById("myDropdown").classList.toggle("show");
+          }
+
+          
+
+          // Close the dropdown if the user clicks outside of it
+          window.onclick = function(e) {
+            if (!e.target.matches('.drop')) {
+
+              var dropdowns = document.getElementsByClassName("dropdown-content");
+              for (var d = 0; d < dropdowns.length; d++) {
+                var openDropdown = dropdowns[d];
+                if (openDropdown.classList.contains('show')) {
+                  openDropdown.classList.remove('show');
+                }
+              }
+            }
+
+            
+          }
+        </script>
+         -->
+        <hr>
         <div id="review-div">
         {% for review in reviews %}
             <div class="w3-container">
-              <h5 class="w3-opacity"><b>{{review.login_name.first_name}} {{review.login_name.last_name}} says</b></h5>
+              <h5 class="w3-text-green"><b>{{review.login_name.first_name}} {{review.login_name.last_name}} says</b></h5>
               <h6 class="w3-text-grey w3-small">On {{review.review_date}}</h6>
               <p class="w3-text-grey"><strong>{{review.review_score}}/10 stars</strong></p>
               <p class="w3-text-black">{{review.review_text}}</p>
@@ -277,23 +332,6 @@
           {% endfor %}
 
           </div>
-
- <!--          {% for rating in review_ratings %}
-            {% for review in reviews %}
-              {% if rating.rater == review.login_name %}
-                <script>
-                  var elem = document.getElementById({{review.id}});
-                    elem.style.display = "none" ;
-                  var elem1 = document.getElementById({{review.id}}+"1");
-                    elem1.style.display = "none" ;
-                  var elem2 = document.getElementById({{review.id}}+"2");
-                    elem2.style.display = "none" ;
-                  var elem3 = document.getElementById({{review.id}}+"3");
-                  elem3.innerHTML = "You have already rated this review."
-                </script>
-              {% endif %}
-            {% endfor %}
-          {% endfor %} -->
 
       </div>
 
