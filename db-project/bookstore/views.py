@@ -137,16 +137,58 @@ def query(search_values, query_type):
 
             # Case when the user types into the search bar and searches
             if query_type == 'all':
+                # Conjunctive search
                 # Gets the list of books' isbn10 that contain keywords from search bar
-                search_title = Book.objects.filter(title__icontains=i)
-                search_author = Book.objects.filter(author__icontains=i)
-                search_publisher = Book.objects.filter(publisher__icontains=i)
-                search_subject = Book.objects.filter(book_subject__icontains=i)
+                # search_title = Book.objects.filter(title__icontains=i)
+                # search_author = Book.objects.filter(author__icontains='')
+                # search_publisher = Book.objects.filter(publisher__icontains=i)
+                # search_subject = Book.objects.filter(book_subject__icontains=i)
+                #
+                # temp.extend(search_title.values_list('isbn10', flat=True))
+                # temp.extend(search_author.values_list('isbn10', flat=True))
+                # temp.extend(search_publisher.values_list('isbn10', flat=True))
+                # temp.extend(search_subject.values_list('isbn10', flat=True))
 
-                temp.extend(search_title.values_list('isbn10', flat=True))
-                temp.extend(search_author.values_list('isbn10', flat=True))
-                temp.extend(search_publisher.values_list('isbn10', flat=True))
-                temp.extend(search_subject.values_list('isbn10', flat=True))
+                # Separated search
+                # Combines the list from the search back into the original sentence and split at commas instead
+                # index in final form refers to the following
+                # [title, author, publisher, category]
+                new_search_values = ' '.join(search_values).split(';')
+                search_dict = {'title':new_search_values[0],'author':new_search_values[1],'publisher':new_search_values[2],'subject':new_search_values[3]}
+                search_title = Q(title__icontains=new_search_values[0])
+                search_author = Q(author__icontains=new_search_values[1])
+                search_publisher = Q(publisher__icontains=new_search_values[2])
+                search_subject = Q(book_subject__icontains=new_search_values[3])
+
+                reference_list = {'title':search_title,'author':search_author,'publisher':search_publisher,'subject':search_subject}
+                queries = [search_title,search_author,search_publisher,search_subject]
+                # removes those fields with no user input
+                for i in search_dict:
+                    if len(search_dict[i]) == 0:
+                        queries.remove(reference_list[i])
+
+                print (queries)
+                if len(queries) == 0:
+                    break
+
+                queries_and = ""
+
+                if len(queries) == 1:
+                    queries_and = queries[0]
+                    search_results = Book.objects.filter(queries_and)
+                    temp.extend(search_results.values_list('isbn10', flat=True))
+
+                # if thhe queries len more than
+                elif len(queries) > 1:
+                    queries_and = queries[0]
+                # AND the Q object with the ones remaining in the list
+                    for item in queries[1:]:
+                        queries_and &= item
+                    search_results = Book.objects.filter(queries_and)
+                    temp.extend(search_results.values_list('isbn10', flat=True))
+
+                print (queries_and)
+                break
 
             # Case when the user clicks an author
             elif query_type == 'author':
@@ -491,7 +533,7 @@ class CartView(View):
         content['img_dict'] = img_dict
         if len(not_enough) > 0:
             content['not_enough'] = not_enough
-           
+
         return render(request, self.template_name, content)
 
 class OrderView(View):
@@ -586,7 +628,7 @@ class StatisticsView(UserPassesTestMixin, View):
                     'copies_sold': count
                 })
 
-            print sorted_publisher_count
+            # print sorted_publisher_count
 
         return render(request, self.template_name, {
             'form': statistics_form,
