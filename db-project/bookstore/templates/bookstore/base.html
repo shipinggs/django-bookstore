@@ -31,7 +31,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <form class="navbar-form navbar-left" method="get" action="{% url 'bookstore:search' %}">
             <div class="form-group">
-              <input type="text" class="form-control" name="search_value" maxlength="100" placeholder="Search">
+              <input type="text" class="form-control" name="search_value" maxlength="150" placeholder="Search: Title; Author; Publisher; Subject">
             </div>
             <button type="submit" class="btn btn-dark">Search</button>
           </form>

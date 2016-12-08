@@ -13,7 +13,7 @@ body {
 }
 
 .navbar-form .form-control {
-    width: 280px;
+    width: 400px;
 }
 
 @media (max-width: 768px) {
