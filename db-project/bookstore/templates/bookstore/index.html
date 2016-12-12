@@ -55,6 +55,13 @@
           </a>
       </li>
       <li>
+          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'general' %}">
+              <img class="rig-img" src="{% static "img/img-help.jpg"  %}">
+              <span class="rig-overlay"></span>
+              <span class="rig-text">General</span>
+          </a>
+      </li>
+      <li>
           <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'journal' %}">
               <img class="rig-img" src="{% static "img/img-journal.jpg"  %}">
               <span class="rig-overlay"></span>
@@ -80,13 +87,6 @@
               <img class="rig-img" src="{% static "img/img-reference.jpg"  %}">
               <span class="rig-overlay"></span>
               <span class="rig-text">Reference Books</span>
-          </a>
-      </li>
-      <li>
-          <a class="rig-cell" href="{% url 'bookstore:search_specific' 'category' 'help' %}">
-              <img class="rig-img" src="{% static "img/img-help.jpg"  %}">
-              <span class="rig-overlay"></span>
-              <span class="rig-text">Self-help</span>
           </a>
       </li>
       <li>

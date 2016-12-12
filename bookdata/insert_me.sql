@@ -1,0 +1,4 @@
+-- ACCOUNTING
+INSERT INTO django_db.books VALUES ('9780981454221','0981454224','Accounting Made Simple: Accounting Explained in 100 Pages or Less','Mike Piper','Simple Subjects, LLC (2013)',2013,5,8.42,'Paperback','Accounting','accounting');
+INSERT INTO django_db.books VALUES ('9781601630230','1601630239','Financial Statements: A Step-by-Step Guide to Understanding and Creating Financial Reports','Thomas R. Ittelson','Career Pr Inc; Rev Exp edition (August 15, 2009)',2009,5,8.70,'Paperback','Finance','accounting');
+INSERT INTO django_db.books VALUES ('9780764166570','0764166573','Accounting Handbook (Barron"s Accounting Handbook) 6th Edition','Jae K. Shim, Joel G. Siegel,Nick Dauber, Anique A. Qureshi','Barron"s Educational Series; 6 edition (November 1, 2014)',2014,5,33.24,'Hardcover','Accounting','accounting');
