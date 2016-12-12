@@ -573,7 +573,7 @@ class OrderView(View):
                             book.num_copies = 0
                         book.save()
 
-                        ShoppingCart.objects.filter(login_name=user).delete()
+                        ShoppingCart.objects.get(login_name=user, isbn13=book).delete()
             else:
                 user = User.objects.get(username=username)
                 ShoppingCart.objects.filter(login_name=user, isbn13=request.POST['remove']).delete()

@@ -6,18 +6,18 @@ import random
 
 testFile = open("isbndb-data-new-random.json")
 data = json.load(testFile)
-print data
+
 #pprint(data)
 db = MySQLdb.connect(host="localhost", user="root", passwd="password", db="django_db")
 cur = db.cursor()
-print db
+
 l = []
 for i in range(len(data['data'])):
     # print i
     isbn13 = data['data'][i]['isbn13']
     isbn10 = data['data'][i]['isbn10']
     title = data['data'][i]['title']
-    print isbn13
+    
     try:
         author = data['data'][i]['author_data'][0]['name']
     except:
