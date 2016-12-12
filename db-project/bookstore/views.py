@@ -207,8 +207,10 @@ def query(search_values, query_type):
             # Case when the user clicks a category
             elif query_type == 'category':
                 # Gets the list of books' isbn10 from a certain category
-                search_category = Book.objects.filter(book_subject__icontains=i)
-                temp.extend(search_category.values_list('isbn10', flat=True))
+                search_category_1 = Book.objects.filter(book_subject__icontains=i)
+                search_category_2 = Book.objects.filter(keyword__icontains=i)
+                temp.extend(search_category_1.values_list('isbn10', flat=True))
+                temp.extend(search_category_2.values_list('isbn10', flat=True))
 
     # Iterates through the list of books' isbn10 and counts the number of times the isbn10 appears in list
     for j in temp:
