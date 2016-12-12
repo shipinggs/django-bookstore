@@ -567,6 +567,8 @@ class OrderView(View):
                         order.save()
 
                         book.num_copies -= int(v)
+                        if book.num_copies < 0:
+                            book.num_copies = 0
                         book.save()
 
                         ShoppingCart.objects.filter(login_name=user).delete()
