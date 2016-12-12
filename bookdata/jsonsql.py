@@ -4,17 +4,20 @@ import re
 import MySQLdb
 import random
 
-testFile = open("isbndb-data.json")
+testFile = open("isbndb-data-new-random.json")
 data = json.load(testFile)
+print data
 #pprint(data)
 db = MySQLdb.connect(host="localhost", user="root", passwd="password", db="django_db")
 cur = db.cursor()
-
+print db
 l = []
 for i in range(len(data['data'])):
+    # print i
     isbn13 = data['data'][i]['isbn13']
     isbn10 = data['data'][i]['isbn10']
     title = data['data'][i]['title']
+    print isbn13
     try:
         author = data['data'][i]['author_data'][0]['name']
     except:
@@ -22,7 +25,7 @@ for i in range(len(data['data'])):
     publisher = data['data'][i]['publisher_text']
     try:
         year = int(re.search(r'\d+', data['data'][i]['edition_info']).group())
-        
+
     except:
         try:
             year = int(re.search(r'\d+', data['data'][i]['publisher_text']).group())
@@ -39,7 +42,7 @@ for i in range(len(data['data'])):
         book_subject = data['data'][i]['subject_ids'][0]
     except:
         book_subject = 'General'
-    
+
     statement = "INSERT INTO book VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     try:
         cur.execute(statement, (isbn13,isbn10,title, author,publisher,year,num_copies,price,book_format,keyword,book_subject))
@@ -49,8 +52,8 @@ for i in range(len(data['data'])):
 
 
 db.close()
-    
-    
+
+
 
 
 ##import isbnlib
